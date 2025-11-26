@@ -103,36 +103,6 @@ for fn in os.listdir(data_dir):
         SPfield_cut = griddata(points, values, (xx_SP_interp, yy_SP_interp), method='linear')
         
         ####################################################################################################
-        # x_ratio_beg = x_beg_HMI / x_HMI
-        # x_ratio_end = x_end_HMI / x_HMI
-        # y_ratio_beg = y_beg_HMI / y_HMI
-        # y_ratio_end = y_end_HMI / y_HMI
-        
-        # x_beg_SP = int(round(x_ratio_beg * x_SP))
-        # x_end_SP = int(round(x_ratio_end * x_SP))
-        # y_beg_SP = int(round(y_ratio_beg * y_SP))
-        # y_end_SP = int(round(y_ratio_end * y_SP))
-        
-        # SPfield_cut = SPfield_coalign[x_beg_SP:x_end_SP, y_beg_SP:y_end_SP]
-        
-        # x_SP_cut, y_SP_cut = SPfield_cut.shape
-        
-        # x_SP_std_int = int(round(x_SP_std))
-        # y_SP_std_int = int(round(y_SP_std))
-        
-        # x_SP_cut_arr = np.linspace(0, 1, x_SP_cut)
-        # y_SP_cut_arr = np.linspace(0, 1, y_SP_cut)
-        # xx_SP_cut, yy_SP_cut = np.meshgrid(x_SP_cut_arr, y_SP_cut_arr, indexing='ij')
-        
-        # x_SP_interp_arr = np.linspace(0, 1, x_SP_std_int)
-        # y_SP_interp_arr = np.linspace(0, 1, y_SP_std_int)
-        # xx_SP_interp, yy_SP_interp = np.meshgrid(x_SP_interp_arr, y_SP_interp_arr, indexing='ij')
-        
-        # points = np.column_stack((xx_SP_cut.flatten(), yy_SP_cut.flatten()))
-        # values = SPfield_cut.flatten()
-        # SPfield_cut = griddata(points, values, (xx_SP_interp, yy_SP_interp), method='linear')
-        
-        ####################################################################################################
         # Saving datasets
         if save_or_not:
             plotField(save_dir, REC_time + '.png', HMIfield_cut, SPfield_cut, REC_time, vmin=-3000, vmax=3000)
