@@ -9,10 +9,11 @@ def loadField(target, fn):
     HMIfield_crop = fields['HMIfield_crop']
     HMIfield_coalign = fields['HMIfield_coalign']
     SPfield_coalign = fields['SPfield_coalign']
+    Txy_crop = fields['Txy_crop']
     
     fields.close()
     
-    return HMIfield_crop, HMIfield_coalign, SPfield_coalign
+    return HMIfield_crop, HMIfield_coalign, SPfield_coalign, Txy_crop
 
 def plotField(target, fn, HMIfield_cut, SPfield_cut, RecTime, vmin=-3000, vmax=3000):
     plt.figure(figsize=(10,5))
@@ -31,13 +32,15 @@ def plotField(target, fn, HMIfield_cut, SPfield_cut, RecTime, vmin=-3000, vmax=3
     plt.savefig(os.path.join(target+'SaveFig/', fn))
     plt.close()
 
-def saveField(target, fn, HMIfield_cut, SPfield_cut):
+def saveField(target, fn, HMIfield_cut, SPfield_cut, Txy_cut):
     np.savez(os.path.join(target+'SaveData/', fn), 
             HMIfield_cut = HMIfield_cut, 
-            SPfield_cut = SPfield_cut)
+            SPfield_cut = SPfield_cut, 
+            Txy_cut = Txy_cut)
 
-data_dir = 'E:/Research/Work/Super_Resolution_Magnetogram/coalignment/SaveData/'
-save_dir = 'E:/Research/Work/Super_Resolution_Magnetogram/dataset/'
+year_record = '2014'
+data_dir = os.path.join('E:/Research/Work/Magnetogram_SuperResol_by_NN/coalignment/', f'{year_record}/SaveData/')
+save_dir = os.path.join('E:/Research/Work/Magnetogram_SuperResol_by_NN/dataset/')
 x_HMI_std = 220
 y_HMI_std = 240
 x_upscale = 1.7   # x_SP_std = 646
@@ -48,7 +51,7 @@ save_or_not = 1
 
 for fn in os.listdir(data_dir):
     if fn.endswith('.npz'):
-        HMIfield_crop, HMIfield_coalign, SPfield_coalign = loadField(data_dir, fn)
+        HMIfield_crop, HMIfield_coalign, SPfield_coalign, Txy_crop = loadField(data_dir, fn)
         REC_time = fn[:-4]
         
         ####################################################################################################
@@ -70,6 +73,7 @@ for fn in os.listdir(data_dir):
         y_end_HMI = y_beg_HMI + y_HMI_std
         
         HMIfield_cut = HMIfield_crop[x_beg_HMI:x_end_HMI, y_beg_HMI:y_end_HMI]
+        Txy_cut = Txy_crop[x_beg_HMI:x_end_HMI, y_beg_HMI:y_end_HMI]
         
         ####################################################################################################
         # Dataset 5: SP-cut-field, imterpolate to x_SP_std*y_SP_std to match the fixed upscale factor
@@ -106,6 +110,7 @@ for fn in os.listdir(data_dir):
         # Saving datasets
         if save_or_not:
             plotField(save_dir, REC_time + '.png', HMIfield_cut, SPfield_cut, REC_time, vmin=-3000, vmax=3000)
-            saveField(save_dir, REC_time + '.npz', HMIfield_cut, SPfield_cut)
+            saveField(save_dir, REC_time + '.npz', HMIfield_cut, SPfield_cut, Txy_cut)
+            print(f'Successfully processed data at {REC_time}!')
         
         # db

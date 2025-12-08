@@ -128,7 +128,7 @@ def parse_download_match_by_line(match_log_path):
     return match_lines
 
 if __name__ == '__main__':
-    year_record = '2012'
+    year_record = '2015'
     srcUpdate = os.path.join('E:/HinodeSOTSPLevel2Update/Main/', year_record)
     srcSPL2_rd = os.path.join('E:/Research/Work/Magnetogram_SuperResol_by_NN/SPL2_reduced/', year_record)
     srcSPL21 = os.path.join('E:/Research/Data/HINODE/SP/L2.1/', year_record)

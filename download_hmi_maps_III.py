@@ -1,4 +1,4 @@
-## Using jsoc_email: 'ruizhuo@pku.edu.cn'
+## Using jsoc_email: '1900012447@pku.edu.cn'
 
 import os
 import time
@@ -11,14 +11,14 @@ from sunpy.net import attrs as a
 
 # Configuration
 # sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2014/' # for test
-sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2015/'
+sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2017/'
 # save_dir = 'E:/Research/Data/SDO/HMI/FullDisk/Magnetogram/4096/2014/' # for test
-save_dir = 'E:/Research/Data/SDO/HMI/FullDisk/Magnetogram/4096/2015/'
+save_dir = 'E:/Research/Data/SDO/HMI/FullDisk/Magnetogram/4096/2017/'
 # year_record = '2014' # for test
-year_record = '2015'
-jsoc_email = 'ruizhuo@pku.edu.cn'
+year_record = '2017'
+jsoc_email = '1900012447@pku.edu.cn'
 # sear_year = '2014' # for test
-sear_year = '2015'
+sear_year = '2017'
 prefix = sear_year
 
 # Network settings

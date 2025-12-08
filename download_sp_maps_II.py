@@ -73,20 +73,20 @@ def check_download(sear_dir, save_dir):
 
 # Configuration
 # sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2014/' # for test
-sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2018/'
+sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2019/'
 lv = 2
 if lv == 2:
     # save_dir = 'E:/Research/Data/HINODE/SP/L2/2014/' # for test
-    save_dir = 'E:/Research/Data/HINODE/SP/L2/2018/'
+    save_dir = 'E:/Research/Data/HINODE/SP/L2/2019/'
     pub = 'https://data.darts.isas.jaxa.jp/pub/hinode/sot/level2hao/'
 elif lv == 21:
     # save_dir = 'E:/Research/Data/HINODE/SP/L2.1/2014/' # for test
-    save_dir = 'E:/Research/Data/HINODE/SP/L2.1/2018/'
+    save_dir = 'E:/Research/Data/HINODE/SP/L2.1/2019/'
     pub = 'https://data.darts.isas.jaxa.jp/pub/hinode/sot/level2.1hao/'
 ins = 'SP3D'
 
 # sear_year = '2014' # for test
-sear_year = '2018'
+sear_year = '2019'
 prefix = sear_year
 
 # Create save directory if not exists
