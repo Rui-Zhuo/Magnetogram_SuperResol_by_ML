@@ -8,6 +8,7 @@ import scipy.ndimage as ndimage
 import os
 import sys
 import re
+import traceback
 import pdb
 from matplotlib.colors import LogNorm
 
@@ -128,7 +129,7 @@ def parse_download_match_by_line(match_log_path):
     return match_lines
 
 if __name__ == '__main__':
-    year_record = '2012'
+    year_record = '2020'
     srcUpdate = os.path.join('E:/HinodeSOTSPLevel2Update/Main/', year_record)
     srcSPL2_rd = os.path.join('E:/Research/Work/Magnetogram_SuperResol_by_NN/SPL2_reduced/', year_record)
     srcSPL21 = os.path.join('E:/Research/Data/HINODE/SP/L2.1/', year_record)
@@ -158,6 +159,7 @@ if __name__ == '__main__':
     match_lines = parse_download_match_by_line(match_log)
     avail_num = 0
     missing_list = []
+    error_list = []  # 新增：记录报错信息
     
     # Fix: Iterate over match_lines (not filesUpdate length)
     for pair in match_lines:
@@ -168,8 +170,14 @@ if __name__ == '__main__':
         print(f'begin processing No.{line_num} pair: ')
         print(f'{fnSP} and {fnHMI}')
         
-        # Construct file paths
         fnUpdate = os.path.join(srcUpdate, fnSP) if fnSP else ''
+        RecTime = os.path.basename(fnUpdate)[-20:-5] if fnUpdate else ''
+        if RecTime:
+            npz_file = os.path.join(savedata_dir, f'{RecTime}.npz')
+            if os.path.exists(npz_file):
+                continue
+        
+        # Construct file paths
         fnSPL2_rd = os.path.join(srcSPL2_rd, fnSP) if fnSP else ''
         fnSPL21 = os.path.join(srcSPL21, fnSP) if fnSP else ''  # Fix: Original had fnSPL21 instead of fnSP
         
@@ -191,171 +199,177 @@ if __name__ == '__main__':
             missing_list.extend(missing_file)
             continue
         
-        avail_num += 1
-        RecTime = os.path.basename(fnUpdate)[-20:-5] if fnUpdate else ''
-        
-        # Load data
-        update = fits.open(fnUpdate)
-        SPL2_rd = fits.open(fnSPL2_rd)
-        SPL21 = fits.open(fnSPL21)
-
-        # OLD X/Y Coordinates
-        SP_XOLD = SPL2_rd[1].data
-        SP_YOLD = SPL2_rd[2].data
-
-        # Updated X/Y Coordinates
-        SP_XNEW = update[38].data
-        SP_YNEW = update[39].data
-
-        # Calculate min/max points
-        pointXMin = min(np.nanmin(SP_XOLD), np.nanmin(SP_XNEW))
-        pointXMax = max(np.nanmax(SP_XOLD), np.nanmax(SP_XNEW))
-        pointYMin = min(np.nanmin(SP_YOLD), np.nanmin(SP_YNEW))
-        pointYMax = max(np.nanmax(SP_YOLD), np.nanmax(SP_YNEW))
-
-        # Load slit position and field data
-        SLITPOS = SPL2_rd[3].data
-        SPfield_coalign = SPL21[4].data
-        SPEXPAND_Br = slitInterp(SPfield_coalign, SLITPOS)
-        
-        # Load affine matrix from header
-        affXform = np.array([
-            [update[0].header['WARP00'], update[0].header['WARP01'], update[0].header['WARP02']],
-            [update[0].header['WARP10'], update[0].header['WARP11'], update[0].header['WARP12']],
-            [0.0, 0.0, 1.0]
-            ])
-
-        # Warping function from HMI to SPEXPAND coordinate system
-        def fromHMItoSPEXPAND(X):
-            return ndimage.affine_transform(denanify(X), affineXYToYX(affXform), 
-                    output_shape=SPEXPAND_Br.shape, order=1)
-
-        # Helper functions for visualization
-        def plotField(fn, HMIfield_crop, HMIfield_coalign, SPfield_coalign, Txy_crop, Tx_center, Ty_center, RecTime, vmin=-3000, vmax=3000):
-            plt.figure(figsize=(10,8))
+        try:
+            avail_num += 1
+            RecTime = os.path.basename(fnUpdate)[-20:-5] if fnUpdate else ''
             
-            plt.subplot(221)
-            plt.pcolormesh(HMIfield_crop, cmap='bwr', vmin=vmin, vmax=vmax)
-            plt.colorbar()
-            plt.axis('equal')
-            plt.title(f'HMIfield_crop {HMIfield_crop.shape}')
-            
-            plt.subplot(222)
-            plt.pcolormesh(HMIfield_coalign, cmap='bwr', vmin=vmin, vmax=vmax)
-            plt.colorbar()
-            plt.axis('equal')
-            plt.title(f'HMIfield_coalign {HMIfield_coalign.shape}')
-            
-            plt.subplot(223)
-            plt.pcolormesh(SPfield_coalign, cmap='bwr', vmin=vmin, vmax=vmax)
-            plt.colorbar()
-            plt.axis('equal')
-            plt.title(f'SPfield_coalign {SPfield_coalign.shape}')
-            
-            plt.subplot(224)
-            plt.pcolormesh(Txy_crop, cmap='jet')
-            plt.colorbar()
-            plt.axis('equal')
-            plt.title('Angular distance to disk center')
-            
-            plt.suptitle(f'{RecTime} center at ({Tx_center:+.2f},{Ty_center:+.2f})')
-            plt.savefig(os.path.join(savefig_dir, fn))
-            plt.close()
-        
-        def saveField(fn, HMIfield_crop, HMIfield_coalign, SPfield_coalign, Txy_crop):
-            np.savez(os.path.join(savedata_dir, fn), 
-                    HMIfield_crop = HMIfield_crop, 
-                    HMIfield_coalign = HMIfield_coalign,
-                    SPfield_coalign = SPfield_coalign,
-                    Txy_crop = Txy_crop)
-        
-        def compareField(fn, HMIfield_coalign, SPfield_coalign, RecTime, vmin=-3000, vmax=3000):
-            plt.figure(figsize=(14,5))
-            HMIfield = HMIfield_coalign.flatten()
-            SPfield_coalign = SPfield_coalign.flatten()
-            
-            plt.subplot(121)
-            plt.hist2d(SPfield_coalign, HMIfield, bins=[100, 100], range=[[vmin,vmax], [vmin, vmax]], 
-                    cmap='jet', norm=LogNorm(vmin=1e-1))
-            plt.plot([vmin,vmax], [vmin,vmax], color='k')
-            plt.colorbar()
-            plt.xlim([vmin, vmax])
-            plt.ylim([vmin, vmax])
-            plt.axis('equal')
-            plt.xlabel('SPfield_coalign')
-            plt.ylabel('HMIfield_coalign')
-            
-            plt.subplot(122)
-            plt.hist(SPfield_coalign,  bins=np.arange(vmin, vmax, 100), fill=False, edgecolor='r', label='SPfield_coalign')
-            plt.hist(HMIfield, bins=np.arange(vmin, vmax, 100), fill=False, edgecolor='b', label='HMIfield_coalign')
-            plt.yscale('log')
-            plt.legend()
-            plt.xlabel('Field strength')
-            plt.ylabel('COUNTS')
-            
-            plt.suptitle(RecTime)
-            plt.savefig(os.path.join(savefig_dir, fn))
-            plt.close()
-        
-        # Get HMI crop parameters from header
-        regDate = update[0].header['PNTDATE']
-        cropMinX = update[0].header['BNDMINX']
-        cropMinY = update[0].header['BNDMINY']
-        cropMaxX = update[0].header['BNDMAXX']
-        cropMaxY = update[0].header['BNDMAXY']
+            # Load data
+            update = fits.open(fnUpdate)
+            SPL2_rd = fits.open(fnSPL2_rd)
+            SPL21 = fits.open(fnSPL21)
 
-        # Load HMI data (ignore .1/.3 suffix)
-        HMIFieldMap = sunpy.map.Map(hmiFieldName)
-        HMI_HMIfield = HMIFieldMap.data[::-1,::-1]
+            # OLD X/Y Coordinates
+            SP_XOLD = SPL2_rd[1].data
+            SP_YOLD = SPL2_rd[2].data
 
-        # Get arcsec per pixel
-        H, W = HMIFieldMap.data.shape[0], HMIFieldMap.data.shape[1]
-        HMIX, HMIY = np.meshgrid(np.array(range(W)), np.array(range(H)))
-        sc = HMIFieldMap.pixel_to_world(HMIX*u.pix, HMIY*u.pix)
-        HMI_Tx = sc.Tx.arcsec[::-1,::-1]
-        HMI_Ty = sc.Ty.arcsec[::-1,::-1]
+            # Updated X/Y Coordinates
+            SP_XNEW = update[38].data
+            SP_YNEW = update[39].data
 
-        # Warp HMI data to SPEXPAND coordinate system
-        SPEXPAND_HMIBr = fromHMItoSPEXPAND(HMI_HMIfield)
-        SPEXPAND_TxRedo = fromHMItoSPEXPAND(HMI_Tx)
-        SPEXPAND_TyRedo = fromHMItoSPEXPAND(HMI_Ty)
+            # Calculate min/max points
+            pointXMin = min(np.nanmin(SP_XOLD), np.nanmin(SP_XNEW))
+            pointXMax = max(np.nanmax(SP_XOLD), np.nanmax(SP_XNEW))
+            pointYMin = min(np.nanmin(SP_YOLD), np.nanmin(SP_YNEW))
+            pointYMax = max(np.nanmax(SP_YOLD), np.nanmax(SP_YNEW))
 
-        # Convert to original coordinate system
-        HMIfield_coalign = slitDrop(SPEXPAND_HMIBr, SLITPOS)
-        SP_TxRedo = slitDrop(SPEXPAND_TxRedo, SLITPOS)
-        SP_TyRedo = slitDrop(SPEXPAND_TyRedo, SLITPOS)
-        
-        # Calculate distance to solar disk center
-        Tx_crop = HMI_Tx[cropMinY:cropMaxY, cropMinX:cropMaxX]
-        Ty_crop = HMI_Ty[cropMinY:cropMaxY, cropMinX:cropMaxX]
-        Txy_crop = np.sqrt(Tx_crop**2 + Ty_crop**2)
-        
-        crop_h, crop_w = Tx_crop.shape
-        Tx_center = Tx_crop[crop_h//2, crop_w//2]
-        Ty_center = Ty_crop[crop_h//2, crop_w//2]
+            # Load slit position and field data
+            SLITPOS = SPL2_rd[3].data
+            SPfield_coalign = SPL21[4].data
+            SPEXPAND_Br = slitInterp(SPfield_coalign, SLITPOS)
+            
+            # Load affine matrix from header
+            affXform = np.array([
+                [update[0].header['WARP00'], update[0].header['WARP01'], update[0].header['WARP02']],
+                [update[0].header['WARP10'], update[0].header['WARP11'], update[0].header['WARP12']],
+                [0.0, 0.0, 1.0]
+                ])
 
-        # Plot and save results
-        plotField(f'{RecTime}.png', 
-                HMI_HMIfield[cropMinY:cropMaxY, cropMinX:cropMaxX], 
-                HMIfield_coalign, 
-                SPfield_coalign, 
-                Txy_crop, Tx_center, Ty_center,
-                RecTime)
-        
-        saveField(f'{RecTime}.npz', 
-                HMI_HMIfield[cropMinY:cropMaxY, cropMinX:cropMaxX], 
-                HMIfield_coalign, 
-                SPfield_coalign, 
-                Txy_crop)
-        
-        compareField(f'{RecTime}_comparsion.png', 
-                    HMIfield_coalign, 
-                    SPfield_coalign, 
-                    RecTime)
-        
-        update.close()
-        SPL2_rd.close()
-        SPL21.close()
+            # Warping function from HMI to SPEXPAND coordinate system
+            def fromHMItoSPEXPAND(X):
+                return ndimage.affine_transform(denanify(X), affineXYToYX(affXform), 
+                        output_shape=SPEXPAND_Br.shape, order=1)
+
+            # Helper functions for visualization
+            def plotField(fn, HMIfield_crop, HMIfield_coalign, SPfield_coalign, Txy_crop, Tx_center, Ty_center, RecTime, vmin=-3000, vmax=3000):
+                plt.figure(figsize=(10,8))
+                
+                plt.subplot(221)
+                plt.pcolormesh(HMIfield_crop, cmap='bwr', vmin=vmin, vmax=vmax)
+                plt.colorbar()
+                plt.axis('equal')
+                plt.title(f'HMIfield_crop {HMIfield_crop.shape}')
+                
+                plt.subplot(222)
+                plt.pcolormesh(HMIfield_coalign, cmap='bwr', vmin=vmin, vmax=vmax)
+                plt.colorbar()
+                plt.axis('equal')
+                plt.title(f'HMIfield_coalign {HMIfield_coalign.shape}')
+                
+                plt.subplot(223)
+                plt.pcolormesh(SPfield_coalign, cmap='bwr', vmin=vmin, vmax=vmax)
+                plt.colorbar()
+                plt.axis('equal')
+                plt.title(f'SPfield_coalign {SPfield_coalign.shape}')
+                
+                plt.subplot(224)
+                plt.pcolormesh(Txy_crop, cmap='jet')
+                plt.colorbar()
+                plt.axis('equal')
+                plt.title('Angular distance to disk center')
+                
+                plt.suptitle(f'{RecTime} center at ({Tx_center:+.2f},{Ty_center:+.2f})')
+                plt.savefig(os.path.join(savefig_dir, fn))
+                plt.close()
+            
+            def saveField(fn, HMIfield_crop, HMIfield_coalign, SPfield_coalign, Txy_crop):
+                np.savez(os.path.join(savedata_dir, fn), 
+                        HMIfield_crop = HMIfield_crop, 
+                        HMIfield_coalign = HMIfield_coalign,
+                        SPfield_coalign = SPfield_coalign,
+                        Txy_crop = Txy_crop)
+            
+            def compareField(fn, HMIfield_coalign, SPfield_coalign, RecTime, vmin=-3000, vmax=3000):
+                plt.figure(figsize=(14,5))
+                HMIfield = HMIfield_coalign.flatten()
+                SPfield_coalign = SPfield_coalign.flatten()
+                
+                plt.subplot(121)
+                plt.hist2d(SPfield_coalign, HMIfield, bins=[100, 100], range=[[vmin,vmax], [vmin, vmax]], 
+                        cmap='jet', norm=LogNorm(vmin=1e-1))
+                plt.plot([vmin,vmax], [vmin,vmax], color='k')
+                plt.colorbar()
+                plt.xlim([vmin, vmax])
+                plt.ylim([vmin, vmax])
+                plt.axis('equal')
+                plt.xlabel('SPfield_coalign')
+                plt.ylabel('HMIfield_coalign')
+                
+                plt.subplot(122)
+                plt.hist(SPfield_coalign,  bins=np.arange(vmin, vmax, 100), fill=False, edgecolor='r', label='SPfield_coalign')
+                plt.hist(HMIfield, bins=np.arange(vmin, vmax, 100), fill=False, edgecolor='b', label='HMIfield_coalign')
+                plt.yscale('log')
+                plt.legend()
+                plt.xlabel('Field strength')
+                plt.ylabel('COUNTS')
+                
+                plt.suptitle(RecTime)
+                plt.savefig(os.path.join(savefig_dir, fn))
+                plt.close()
+            
+            # Get HMI crop parameters from header
+            regDate = update[0].header['PNTDATE']
+            cropMinX = update[0].header['BNDMINX']
+            cropMinY = update[0].header['BNDMINY']
+            cropMaxX = update[0].header['BNDMAXX']
+            cropMaxY = update[0].header['BNDMAXY']
+
+            # Load HMI data (ignore .1/.3 suffix)
+            HMIFieldMap = sunpy.map.Map(hmiFieldName)
+            HMI_HMIfield = HMIFieldMap.data[::-1,::-1]
+
+            # Get arcsec per pixel
+            H, W = HMIFieldMap.data.shape[0], HMIFieldMap.data.shape[1]
+            HMIX, HMIY = np.meshgrid(np.array(range(W)), np.array(range(H)))
+            sc = HMIFieldMap.pixel_to_world(HMIX*u.pix, HMIY*u.pix)
+            HMI_Tx = sc.Tx.arcsec[::-1,::-1]
+            HMI_Ty = sc.Ty.arcsec[::-1,::-1]
+
+            # Warp HMI data to SPEXPAND coordinate system
+            SPEXPAND_HMIBr = fromHMItoSPEXPAND(HMI_HMIfield)
+            SPEXPAND_TxRedo = fromHMItoSPEXPAND(HMI_Tx)
+            SPEXPAND_TyRedo = fromHMItoSPEXPAND(HMI_Ty)
+
+            # Convert to original coordinate system
+            HMIfield_coalign = slitDrop(SPEXPAND_HMIBr, SLITPOS)
+            SP_TxRedo = slitDrop(SPEXPAND_TxRedo, SLITPOS)
+            SP_TyRedo = slitDrop(SPEXPAND_TyRedo, SLITPOS)
+            
+            # Calculate distance to solar disk center
+            Tx_crop = HMI_Tx[cropMinY:cropMaxY, cropMinX:cropMaxX]
+            Ty_crop = HMI_Ty[cropMinY:cropMaxY, cropMinX:cropMaxX]
+            Txy_crop = np.sqrt(Tx_crop**2 + Ty_crop**2)
+            
+            crop_h, crop_w = Txy_crop.shape
+            Tx_center = Tx_crop[crop_h//2, crop_w//2]
+            Ty_center = Ty_crop[crop_h//2, crop_w//2]
+
+            # Plot and save results
+            # plotField(f'{RecTime}.png', 
+            #         HMI_HMIfield[cropMinY:cropMaxY, cropMinX:cropMaxX], 
+            #         HMIfield_coalign, 
+            #         SPfield_coalign, 
+            #         Txy_crop, Tx_center, Ty_center,
+            #         RecTime)
+            
+            # saveField(f'{RecTime}.npz', 
+            #         HMI_HMIfield[cropMinY:cropMaxY, cropMinX:cropMaxX], 
+            #         HMIfield_coalign, 
+            #         SPfield_coalign, 
+            #         Txy_crop)
+            
+            # compareField(f'{RecTime}_comparsion.png', 
+            #             HMIfield_coalign, 
+            #             SPfield_coalign, 
+            #             RecTime)
+            
+            update.close()
+            SPL2_rd.close()
+            SPL21.close()
+            
+        except Exception as e:
+            error_info = f"Line {line_num} - SP: {fnSP}, HMI: {fnHMI} | Error: {str(e)}"
+            error_list.append(error_info)
+            continue
     
     # Print missing files summary
     print(f"\n===== Processing Summary =====")
@@ -367,3 +381,8 @@ if __name__ == '__main__':
             print(f"  {idx}. {missing_file}")
     else:
         print("\nNo missing files!")
+    
+    if error_list:
+        print(f"\nError files ({len(error_list)}):")
+        for idx, error in enumerate(error_list, 1):
+            print(f"  {idx}. {error}")

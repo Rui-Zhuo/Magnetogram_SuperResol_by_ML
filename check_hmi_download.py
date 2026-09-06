@@ -1,9 +1,5 @@
 import os
 import re
-import time
-import urllib.error
-import astropy.units as u
-from astropy.time import Time
 from sunpy.net import Fido
 from sunpy.net import attrs as a
 
@@ -179,7 +175,7 @@ def delete_extra_files(save_dir, extra_files, confirm=True):
 
 if __name__ == '__main__':
     # Configuration
-    year_record = '2011'
+    year_record = '2020'
     save_dir_root = 'E:/Research/Data/SDO/HMI/FullDisk/Magnetogram/4096/'
     jsoc_email = 'ruizhuo@pku.edu.cn'  # Replace with your JSOC email
     delete_extra = True  # Set to False to skip deletion

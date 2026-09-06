@@ -1,4 +1,7 @@
 ## Using jsoc_email: 'ruizhuo@pku.edu.cn'
+## Using jsoc_email: '2301110628@pku.edu.cn'
+## Using jsoc_email: '1900012447@pku.edu.cn'
+## Using jsoc_email: 'gjh1024989783@gmail.com'
 
 import os
 import time
@@ -10,15 +13,11 @@ from sunpy.net import Fido
 from sunpy.net import attrs as a
 
 # Configuration
-# sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2014/' # for test
-sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2015/'
-# save_dir = 'E:/Research/Data/SDO/HMI/FullDisk/Magnetogram/4096/2014/' # for test
-save_dir = 'E:/Research/Data/SDO/HMI/FullDisk/Magnetogram/4096/2015/'
-# year_record = '2014' # for test
-year_record = '2015'
+sear_dir = 'E:/HinodeSOTSPLevel2Update/Main/2014/'
+save_dir = 'E:/Research/Data/SDO/HMI/FullDisk/Magnetogram/4096/2014/'
+year_record = '2014'
+sear_year = '2014'
 jsoc_email = 'ruizhuo@pku.edu.cn'
-# sear_year = '2014' # for test
-sear_year = '2015'
 prefix = sear_year
 
 # Network settings

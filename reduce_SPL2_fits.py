@@ -15,11 +15,11 @@ def get_sorted_files(folder):
 
 if __name__ == '__main__':
     # srcSPL2 = 'E:/Research/Data/HINODE/SP/L2/2014/' # for test
-    srcSPL2 = 'E:/Research/Data/HINODE/SP/L2/2019/'
+    srcSPL2 = 'E:/Research/Data/HINODE/SP/L2/2021/'
     # srcSPL2_rd = 'E:/Research/Work/Magnetogram_SuperResol_by_NN/SPL2_reduced/2014' # for test
-    srcSPL2_rd = 'E:/Research/Work/Magnetogram_SuperResol_by_NN/SPL2_reduced/2019/'
+    srcSPL2_rd = 'E:/Research/Work/Magnetogram_SuperResol_by_NN/SPL2_reduced/2021/'
     # year_record = '2014' # for test
-    year_record = '2019'
+    year_record = '2021'
     # Failure log path (saved in the reduced data directory)
     failed_log_path = os.path.join(srcSPL2_rd, f'processing_failed_{year_record}.txt')
 

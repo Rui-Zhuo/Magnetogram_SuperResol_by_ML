@@ -38,7 +38,7 @@ def saveField(target, fn, HMIfield_cut, SPfield_cut, Txy_cut):
             SPfield_cut = SPfield_cut, 
             Txy_cut = Txy_cut)
 
-year_record = '2014'
+year_record = '2011'
 data_dir = os.path.join('E:/Research/Work/Magnetogram_SuperResol_by_NN/coalignment/', f'{year_record}/SaveData/')
 save_dir = os.path.join('E:/Research/Work/Magnetogram_SuperResol_by_NN/dataset/')
 x_HMI_std = 220
