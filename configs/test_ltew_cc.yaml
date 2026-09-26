@@ -1,0 +1,9 @@
+model_name: LTEW-CC
+checkpoint: pre-trained/ltew_cc.pth
+input: examples/data
+output: outputs/ltew_cc
+device: cpu
+height: 312
+width: 336
+chunk_size: 8192
+threads: 4

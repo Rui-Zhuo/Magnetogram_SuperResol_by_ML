@@ -6,3 +6,4 @@
 *.pth binary
 *.npz binary
 *.png binary
+*.fits binary

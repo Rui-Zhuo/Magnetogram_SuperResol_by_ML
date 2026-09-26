@@ -1,0 +1,134 @@
+{
+  "case": "quiet-sun",
+  "title": "Quiet Sun: network and internetwork",
+  "paper_figure": 9,
+  "model": "PM-LTEW-CC",
+  "shape": [
+    6240,
+    6720
+  ],
+  "arrays": {
+    "SRfield": {
+      "dtype": "float32",
+      "description": "Original assembled reconstruction before final filling",
+      "unit": "G"
+    },
+    "SRFfield": {
+      "dtype": "float64",
+      "description": "Existing filled full-disk reconstruction used for display",
+      "unit": "G"
+    }
+  },
+  "inputs": [
+    {
+      "file": "hmi.fits",
+      "sha256": "97915e7d400aed2f627e51a4c008295a54d05c7c81edaa11bbedc3fb5c041418",
+      "observation_time": "2019-04-07T06:22:38.600"
+    },
+    {
+      "file": "sp.fits",
+      "sha256": "8be5e4e500647ed18155af15b6414dab16bb8d4336bec9bc58fbf4e9cfda5a1e",
+      "observation_start": "2019-04-07T06:22:00.056",
+      "observation_end": "2019-04-07T06:54:20.258"
+    }
+  ],
+  "parts": [
+    {
+      "file": "results/part-01.npz",
+      "row_start": 0,
+      "row_stop": 520,
+      "bytes": 10191321,
+      "sha256": "c073abd084be87dac2008beae13a9101c9477e889904ac613305af68931d3c40"
+    },
+    {
+      "file": "results/part-02.npz",
+      "row_start": 520,
+      "row_stop": 1040,
+      "bytes": 18836413,
+      "sha256": "3f6d1378e1af43110a5ed257e7bb88c399ff736046635769cca83e1d46dedc30"
+    },
+    {
+      "file": "results/part-03.npz",
+      "row_start": 1040,
+      "row_stop": 1560,
+      "bytes": 23183854,
+      "sha256": "e1751965afd8ee5c33e95a2ca9467da154d3252a2a2af1f5294c3b950a280afe"
+    },
+    {
+      "file": "results/part-04.npz",
+      "row_start": 1560,
+      "row_stop": 2080,
+      "bytes": 25870468,
+      "sha256": "7fb2b3a197fb104f41981b60886830fed566c0b3333490aff1db6af38a58dfa6"
+    },
+    {
+      "file": "results/part-05.npz",
+      "row_start": 2080,
+      "row_stop": 2600,
+      "bytes": 27595504,
+      "sha256": "b301e2616d82b3947bd5fdd280bcf9e7b78cd2b4eadd126d729b8613192cce7e"
+    },
+    {
+      "file": "results/part-06.npz",
+      "row_start": 2600,
+      "row_stop": 3120,
+      "bytes": 28377529,
+      "sha256": "08791a310d3d1f4e74c42956474bfedf2e23a380daa230b7e8d8c42b85c03e5a"
+    },
+    {
+      "file": "results/part-07.npz",
+      "row_start": 3120,
+      "row_stop": 3640,
+      "bytes": 28385539,
+      "sha256": "5891ffa5b5bc9b4d7776073aa029811f4af5cb00175377fb2b915604f337aed7"
+    },
+    {
+      "file": "results/part-08.npz",
+      "row_start": 3640,
+      "row_stop": 4160,
+      "bytes": 27560548,
+      "sha256": "e11d117093fc90a004df8c63a22a8c7e844de0ee4611cce011f0ded2155328af"
+    },
+    {
+      "file": "results/part-09.npz",
+      "row_start": 4160,
+      "row_stop": 4680,
+      "bytes": 25894393,
+      "sha256": "d34f44e83b9d3935b22e02b3cacfef65294174c93fbf7c38e2e3371bfb772f37"
+    },
+    {
+      "file": "results/part-10.npz",
+      "row_start": 4680,
+      "row_stop": 5200,
+      "bytes": 23210185,
+      "sha256": "89bb56c5eb53b11b57725eff634482c0cac6f79404e10bbf596bea2a8c6ccee6"
+    },
+    {
+      "file": "results/part-11.npz",
+      "row_start": 5200,
+      "row_stop": 5720,
+      "bytes": 18882341,
+      "sha256": "1a9754730c037abb9084455dba061b85d589b046afe865ebbb2569b4f12bb563"
+    },
+    {
+      "file": "results/part-12.npz",
+      "row_start": 5720,
+      "row_stop": 6240,
+      "bytes": 10276315,
+      "sha256": "6fd3458a727dde6cafa45796daad663cbd1aec81fcd38a992338a8753c32f41e"
+    }
+  ],
+  "storage": "Lossless compressed row slabs; concatenate in row_start order.",
+  "geometry": {
+    "input_shape": [
+      4096,
+      4096
+    ],
+    "border_crop_pixels": 48,
+    "scale_y": 1.56,
+    "scale_x": 1.68,
+    "source_plot_hmi_transform": "np.fliplr(hmi_map.data)",
+    "source_plot_sp_transform": "np.flipud(sp_hdu_4)",
+    "reconstruction_wcs": "Not stored in the original NPZ; do not interpret array indices as world coordinates without the input geometry."
+  }
+}

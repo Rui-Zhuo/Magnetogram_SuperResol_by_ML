@@ -1,0 +1,9 @@
+model_name: PM-LTEW-CC
+checkpoint: pre-trained/pm_ltew_cc.pth
+input: examples/data
+output: outputs/pm_ltew_cc
+device: cpu
+height: 312
+width: 336
+chunk_size: 8192
+threads: 4

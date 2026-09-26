@@ -1,0 +1,134 @@
+{
+  "case": "solar-maximum",
+  "title": "Solar maximum",
+  "paper_figure": 6,
+  "model": "PM-LTEW-CC",
+  "shape": [
+    6240,
+    6720
+  ],
+  "arrays": {
+    "SRfield": {
+      "dtype": "float32",
+      "description": "Original assembled reconstruction before final filling",
+      "unit": "G"
+    },
+    "SRFfield": {
+      "dtype": "float64",
+      "description": "Existing filled full-disk reconstruction used for display",
+      "unit": "G"
+    }
+  },
+  "inputs": [
+    {
+      "file": "hmi.fits",
+      "sha256": "cec775f61f133466e942f210122967347523eb2ed573e0807c796b30d530449e",
+      "observation_time": "2024-05-05T11:58:42.400"
+    },
+    {
+      "file": "sp.fits",
+      "sha256": "419c1d4980c40b226cf0d0275c0586d631546489775fe0053d160429e32416d5",
+      "observation_start": "2024-05-05T11:58:53.408",
+      "observation_end": "2024-05-05T12:54:10.222"
+    }
+  ],
+  "parts": [
+    {
+      "file": "results/part-01.npz",
+      "row_start": 0,
+      "row_stop": 520,
+      "bytes": 9353754,
+      "sha256": "2323109c783620c54ad4c50152fe0d8fcec69b84995d4993c4e50fb8511f6221"
+    },
+    {
+      "file": "results/part-02.npz",
+      "row_start": 520,
+      "row_stop": 1040,
+      "bytes": 18482123,
+      "sha256": "98899e68f33705f3611147d8c7a154b04dd408cf66648ad73002127c2597345b"
+    },
+    {
+      "file": "results/part-03.npz",
+      "row_start": 1040,
+      "row_stop": 1560,
+      "bytes": 22987376,
+      "sha256": "9468336612c272a3662ecb3dab0a8509f498e6f0a12e7b3a17f1614bafeb3562"
+    },
+    {
+      "file": "results/part-04.npz",
+      "row_start": 1560,
+      "row_stop": 2080,
+      "bytes": 25922260,
+      "sha256": "a2b224b719cfe5d3d1f454f8f92c836db3f2950d3a38aa042a6545f9736a1823"
+    },
+    {
+      "file": "results/part-05.npz",
+      "row_start": 2080,
+      "row_stop": 2600,
+      "bytes": 27576676,
+      "sha256": "1d326026ebf9193a9b3897dcb6c037cfec108e1f5d518c5c65bd30ef0aa47cd9"
+    },
+    {
+      "file": "results/part-06.npz",
+      "row_start": 2600,
+      "row_stop": 3120,
+      "bytes": 28252955,
+      "sha256": "0073b9c1dde9fd4d63112dc5379a91e077aa95740a524ece987829b57a2c37d4"
+    },
+    {
+      "file": "results/part-07.npz",
+      "row_start": 3120,
+      "row_stop": 3640,
+      "bytes": 28366055,
+      "sha256": "2a9dc52e57437416838a21935979e333eac568078ea8cbe07e162a9804c2a71f"
+    },
+    {
+      "file": "results/part-08.npz",
+      "row_start": 3640,
+      "row_stop": 4160,
+      "bytes": 27718711,
+      "sha256": "5c64c22437067740a53bda9d5f50d7f1658236f66a4ca9d73f299cffa7ae6979"
+    },
+    {
+      "file": "results/part-09.npz",
+      "row_start": 4160,
+      "row_stop": 4680,
+      "bytes": 25854923,
+      "sha256": "c37eeb8170cf652a6e3c1279519dce8ccf0f4fd7d67416c0c9baf68ef3a59909"
+    },
+    {
+      "file": "results/part-10.npz",
+      "row_start": 4680,
+      "row_stop": 5200,
+      "bytes": 23048551,
+      "sha256": "f000df945b03ae50f871d1522f4d17d49857aa77e0cd0706da0fb0cd36bc0d58"
+    },
+    {
+      "file": "results/part-11.npz",
+      "row_start": 5200,
+      "row_stop": 5720,
+      "bytes": 18646053,
+      "sha256": "6a564182a9b69e2824f1c0fb6fabd250ea4837bf24f8ed36f2c60066a5bc6cf9"
+    },
+    {
+      "file": "results/part-12.npz",
+      "row_start": 5720,
+      "row_stop": 6240,
+      "bytes": 9737811,
+      "sha256": "82080d9a7798cacd8d3089ff13d30caf3514b54cbdfefbf1908ddf472d0988a8"
+    }
+  ],
+  "storage": "Lossless compressed row slabs; concatenate in row_start order.",
+  "geometry": {
+    "input_shape": [
+      4096,
+      4096
+    ],
+    "border_crop_pixels": 48,
+    "scale_y": 1.56,
+    "scale_x": 1.68,
+    "source_plot_hmi_transform": "np.fliplr(hmi_map.data)",
+    "source_plot_sp_transform": "np.flipud(sp_hdu_4)",
+    "reconstruction_wcs": "Not stored in the original NPZ; do not interpret array indices as world coordinates without the input geometry."
+  }
+}

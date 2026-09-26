@@ -1,6 +1,5 @@
 {
-  "date": "2026-09-26",
-  "scope": "Publication integrity and code-entry checks only; no comparison against historical figures/results.",
+  "scope": "File integrity, lossless packaging and code-entry checks; no comparison of model predictions with historical results or figures.",
   "environment": {
     "python": "3.10.7",
     "torch": "2.9.0+cpu",
@@ -10,7 +9,7 @@
     "platform": "Windows",
     "cuda": false
   },
-  "syntax_files": 20,
+  "syntax_files": 21,
   "cli_help": {
     "download": "passed",
     "coalign": "passed",
@@ -19,7 +18,9 @@
     "train": "passed",
     "inference": "passed",
     "evaluate": "passed",
-    "plot_samples": "passed"
+    "plot_samples": "passed",
+    "full_disk": "passed",
+    "plot_magnetogram": "passed"
   },
   "checkpoints": [
     {
@@ -89,5 +90,25 @@
       "Documentation links and single README test figure"
     ],
     "historical_result_comparison": false
-  }
+  },
+  "test_config_overrides": "passed (stubbed prediction; no research-result comparison)",
+  "full_disk": {
+    "solar-maximum": {
+      "parts": 12,
+      "checksums": "passed",
+      "lossless_array_reassembly": "passed"
+    },
+    "solar-minimum": {
+      "parts": 12,
+      "checksums": "passed",
+      "lossless_array_reassembly": "passed"
+    },
+    "quiet-sun": {
+      "parts": 12,
+      "checksums": "passed",
+      "lossless_array_reassembly": "passed"
+    }
+  },
+  "publication_layout": "passed: local links, two main-text full-disk images, one test image",
+  "magnetogram_plot": "passed: included HMI FITS displayed and image inspected"
 }

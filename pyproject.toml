@@ -13,4 +13,4 @@ dependencies = ["numpy>=1.23,<3", "scipy>=1.10", "torch>=2.2", "scikit-image>=0.
 solar = ["astropy>=5", "sunpy[map,net]>=5", "reproject>=0.10"]
 
 [tool.setuptools.packages.find]
-include = ["magnetosr*"]
+include = ["magnetosr*", "models*"]

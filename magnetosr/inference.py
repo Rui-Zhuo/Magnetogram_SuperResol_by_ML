@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn.functional as F
-from . import models
+import models
 from .coordinates import make_coord
 
 
@@ -56,15 +56,31 @@ def predict(model, hmi, radius, shape=(312, 336), chunk_size=8192):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--checkpoint', default='checkpoints/pm_ltew_cc.pth')
-    p.add_argument('--input', type=Path, required=True, help='NPZ file or directory')
-    p.add_argument('--output', type=Path, required=True)
-    p.add_argument('--device', default='cpu')
-    p.add_argument('--height', type=int, default=312)
-    p.add_argument('--width', type=int, default=336)
-    p.add_argument('--chunk-size', type=int, default=8192)
-    p.add_argument('--threads', type=int, default=4)
+    p.add_argument('--config', type=Path, help='Test YAML; explicit options override its values')
+    p.add_argument('--checkpoint')
+    p.add_argument('--input', type=Path, help='NPZ file or directory')
+    p.add_argument('--output', type=Path)
+    p.add_argument('--device')
+    p.add_argument('--height', type=int)
+    p.add_argument('--width', type=int)
+    p.add_argument('--chunk-size', type=int)
+    p.add_argument('--threads', type=int)
     a = p.parse_args()
+    defaults = dict(checkpoint='pre-trained/pm_ltew_cc.pth', device='cpu',
+                    height=312, width=336, chunk_size=8192, threads=4)
+    if a.config:
+        import yaml
+        config = yaml.safe_load(a.config.read_text(encoding='utf-8'))
+        allowed = set(defaults) | {'input', 'output', 'model_name'}
+        if not isinstance(config, dict) or set(config)-allowed:
+            p.error('Test configuration must contain only inference options and model_name')
+        defaults.update(config)
+    for key, value in defaults.items():
+        if key != 'model_name' and getattr(a, key, None) is None:
+            setattr(a, key, value)
+    if a.input is None or a.output is None:
+        p.error('Provide input/output in --config or as command options')
+    a.input, a.output = Path(a.input), Path(a.output)
     torch.set_num_threads(a.threads)
     model = load_model(a.checkpoint, a.device)
     files = [a.input] if a.input.is_file() else sorted(a.input.glob('*.npz'))

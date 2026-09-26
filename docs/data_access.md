@@ -7,8 +7,9 @@
 - Original test membership, AR-like labels and heliocentric angles for all 2,023 test samples.
 - Six model checkpoints, exported without optimizer state. SHA-256 checksums identify both source files and exports.
 - Three existing research predictions and their figures, with source filenames.
+- Three full-disk paper applications with input HMI/SP FITS, existing result arrays and figures; see [full-disk](../full-disk/README.md).
 
-The full paired dataset (~15 GB in its original NPZ storage), raw FITS archive, and derived full-disk products are **not** bundled. Full-data archival is a separate task; no permanent archive URL or DOI is available in this release. A generation recipe is useful but is not equivalent to making the actual training and derived datasets downloadable.
+The full paired dataset (~15 GB in its original NPZ storage) and complete raw FITS archive are **not** bundled. The three selected full-disk cases are included. Full-data archival is a separate task; no permanent archive URL or DOI is available in this release. A generation recipe is useful but is not equivalent to making the actual training and derived datasets downloadable.
 
 ## Raw sources
 

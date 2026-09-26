@@ -1,0 +1,74 @@
+[
+  {
+    "name": "pm_ltew_cc",
+    "epoch": 115,
+    "file": "pre-trained/pm_ltew_cc.pth",
+    "bytes": 63815671,
+    "sha256": "26f80280583837e4f4ed4b2738c4bf7aaad63a34f76ff9c0e964bcd2eb2ca77a",
+    "source_sha256": "f4c8f864705769e3f4a0087ee46d4a41943d849a140f6eb0e7fce2291141e544",
+    "use_pm": true,
+    "cc_weight": 0.01,
+    "architecture": "lte-warp",
+    "display_name": "PM-LTEW-CC"
+  },
+  {
+    "name": "pm_ltew",
+    "epoch": 139,
+    "file": "pre-trained/pm_ltew.pth",
+    "bytes": 63810288,
+    "sha256": "25657f0758b8c0cef9a40924f199acedac4c120313354a8d07b88c1846efd924",
+    "source_sha256": "ab3c64d659e607ff3367b7e8679f58edcc6484e43cefa37cab3ea5e521a0e760",
+    "use_pm": true,
+    "cc_weight": 0.0,
+    "architecture": "lte-warp",
+    "display_name": "PM-LTEW"
+  },
+  {
+    "name": "ltew_cc",
+    "epoch": 154,
+    "file": "pre-trained/ltew_cc.pth",
+    "bytes": 63810288,
+    "sha256": "577376169035b735246e72fc928f7efa41e6febb560ce062529bca1b2ee50f5e",
+    "source_sha256": "12b39fdfe3784d43446b1d13dfa5b3f2ca6c241e4b7cf8bc8518bd7c4c7da312",
+    "use_pm": false,
+    "cc_weight": 0.01,
+    "architecture": "lte-warp",
+    "display_name": "LTEW-CC"
+  },
+  {
+    "name": "ltew",
+    "epoch": 81,
+    "file": "pre-trained/ltew.pth",
+    "bytes": 63713897,
+    "sha256": "cf99adc37851cb887cb744fc96c00b418d79eeb6495822ad7ce2c0ba57a31179",
+    "source_sha256": "48f532b638e85ea4de0ec94f646a5940e5518fe59e33cd789732437514186448",
+    "use_pm": false,
+    "cc_weight": 0.0,
+    "architecture": "lte-warp",
+    "display_name": "LTEW"
+  },
+  {
+    "name": "pm_rcan_cc",
+    "epoch": 103,
+    "file": "pre-trained/pm_rcan_cc.pth",
+    "bytes": 61841121,
+    "sha256": "ddd3a52ea28b982c3153cf5e5a4a0851d93c5799ddd8504f694fd47c390db833",
+    "source_sha256": "e53e710c65bcd55780ac422df4d50242d8871dfc9f8048c6bff245e618fe22e9",
+    "use_pm": true,
+    "cc_weight": 0.01,
+    "architecture": "pm-rcan-cc",
+    "display_name": "PM-RCAN-CC"
+  },
+  {
+    "name": "pm_srcnn_cc",
+    "epoch": 198,
+    "file": "pre-trained/pm_srcnn_cc.pth",
+    "bytes": 57285,
+    "sha256": "2ddae7f5eb17bc1ded3f747d2d8c76c64602affbb748a9fc5d1097c7d9e900a9",
+    "source_sha256": "4839584f256fe8c3d4c5bf52bca85e4f4e5cedc1c61eb6ea0167241cadf225cd",
+    "use_pm": true,
+    "cc_weight": 0.01,
+    "architecture": "pm-srcnn-cc",
+    "display_name": "PM-SRCNN-CC"
+  }
+]

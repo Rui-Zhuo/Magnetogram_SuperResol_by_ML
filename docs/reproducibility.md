@@ -2,7 +2,7 @@
 
 ## Primary model
 
-The primary model is the 20260416 run, epoch 115. Its model specification and tensor values are retained; optimizer state is omitted from the public inference checkpoint. `checkpoints/manifest.json` identifies original and exported files with SHA-256 hashes. Additional checkpoints are the 20260831, 20260901, 20260902, 20260912 and 20260915 ablation runs.
+The primary model is **PM-LTEW-CC**, epoch 115. Its model specification and tensor values are retained; optimizer state is omitted from the public inference checkpoint. `pre-trained/manifest.json` identifies original and exported files with SHA-256 hashes. The five ablations are PM-LTEW, LTEW-CC, LTEW, PM-RCAN-CC and PM-SRCNN-CC.
 
 The LTE-warp implementation comes from retained original source, with package-relative imports, CPU/CUDA device handling and an explicit no-position-modulation switch. RCAN/MLP parameter names are preserved. The paper's PM-LTEW-CC model is registered as `lte-warp`; its phase layer receives a two-dimensional cell-size vector.
 
@@ -34,6 +34,8 @@ Local-registration kernels are retained. Removed SciPy `interp2d` calls are repl
 
 ## Existing examples and figures
 
-Examples use the supplied paired NPZ data, saved 20260416 predictions and existing figure PNGs. `examples/manifest.json` maps observation IDs to original prediction filenames. Public prediction NPZ files contain `HMIfield`, `Txy`, `SPfield` from paired data and saved `pred` reshaped to the target grid. Predictions are not recalculated to replace existing research results. The evaluator reads its reference from the paired-data directory rather than relying on the historical output-file target normalization.
+Examples use the supplied paired NPZ data, saved predictions and existing figure PNGs. `examples/manifest.json` maps observation IDs to original prediction filenames. Public prediction NPZ files contain `HMIfield`, `Txy`, `SPfield` from paired data and saved `pred` reshaped to the target grid. Predictions are not recalculated to replace existing research results. The evaluator reads its reference from the paired-data directory rather than relying on the historical output-file target normalization.
+
+The three full-disk cases preserve the existing input FITS files, reconstructed arrays and paper figures. Arrays are split into losslessly compressed row slabs; manifests record shapes, dtypes and checksums.
 
 Release checks cover file completeness, syntax, entry-point availability, split membership and model loading. Agreement between current code, historical results and paper figures is outside this release-preparation scope. A complete data archive remains a separate task.

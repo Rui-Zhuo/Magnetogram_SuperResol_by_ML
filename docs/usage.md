@@ -3,23 +3,14 @@
 ## Layout
 
 ```text
-magnetosr/
-  models/
-    lte_warp.py       # shared LTEW architecture
-    pm_rcan_cc.py     # PM-RCAN-CC
-    pm_srcnn_cc.py    # PM-SRCNN-CC
-  download.py        # HMI and SP downloads
-  coalign.py         # affine/pointing alignment
-  prepare.py         # local registration, crop and NPZ generation
-  train.py           # shared training entry
-  inference.py       # CPU/CUDA inference
-  evaluate.py        # metrics and grouped summaries
-configs/
-  train_*.yaml       # runnable configurations named after Table 2 models
-  historical/       # original run configurations, using the same model names
-checkpoints/         # weights and provenance manifest
-examples/            # paired test data, existing predictions and figures
-data/                # split and test metadata
+models/              # LTE-warp, PM-RCAN-CC, PM-SRCNN-CC and shared layers
+pre-trained/         # six checkpoints and checksum manifest
+configs/             # train_*.yaml, test_*.yaml and historical configurations
+examples/            # paired test data, saved predictions and figures
+full-disk/           # three full-disk cases, original inputs, results and figures
+magnetosr/           # Python processing, training, inference and plotting tools
+data/                # dataset split and test metadata
+docs/                # detailed workflow and metric definitions
 ```
 
 ## Prepare data
@@ -45,22 +36,33 @@ python -m magnetosr.split --data data/paired --output data/splits/new_split.json
 
 ```bash
 python -m magnetosr.train --config configs/train_pm_ltew_cc.yaml --data data/paired --output outputs/train_pm_ltew_cc --device cuda
-python -m magnetosr.inference --checkpoint checkpoints/pm_ltew_cc.pth --input examples/data --output outputs/pm_ltew_cc --device cpu
+python -m magnetosr.inference --config configs/test_pm_ltew_cc.yaml
 python -m magnetosr.evaluate --predictions outputs/pm_ltew_cc --data examples/data --output outputs/evaluation
 python -m magnetosr.plot_samples --data examples/data --predictions outputs/pm_ltew_cc --output outputs/figures
 ```
 
 Select other experiments by replacing the configuration/checkpoint with the corresponding Table 2 name from the README. `--chunk-size` controls inference memory. Training checkpoints written as `last.pth` support `--resume`; distributed inference weights omit optimizer state. The input order is `[HMIfield, Txy]`; both channels and the target are divided by 200, and inference outputs are converted back to G.
 
-## Model names and original runs
+## Model settings
 
-| Table 2 name | File stem | Original run | Position modulation | CC weight |
-|---|---|---|---|---|
-| PM-LTEW-CC | `pm_ltew_cc` | 20260416 | Yes | 0.01 |
-| PM-LTEW | `pm_ltew` | 20260831 | Yes | 0 |
-| LTEW-CC | `ltew_cc` | 20260901 | No | 0.01 |
-| LTEW | `ltew` | 20260902 | No | 0 |
-| PM-RCAN-CC | `pm_rcan_cc` | 20260912 | Yes | 0.01 |
-| PM-SRCNN-CC | `pm_srcnn_cc` | 20260915 | Yes | 0.01 |
+| Table 2 name | File stem | Position modulation | CC weight |
+|---|---|---|---|
+| PM-LTEW-CC | `pm_ltew_cc` | Yes | 0.01 |
+| PM-LTEW | `pm_ltew` | Yes | 0 |
+| LTEW-CC | `ltew_cc` | No | 0.01 |
+| LTEW | `ltew` | No | 0 |
+| PM-RCAN-CC | `pm_rcan_cc` | Yes | 0.01 |
+| PM-SRCNN-CC | `pm_srcnn_cc` | Yes | 0.01 |
 
 Bicubic, Empirical-D and Empirical-Z are the non-learned baselines in Table 2 and have no training checkpoints. The shared evaluator includes the bicubic baseline. More implementation details are in [implementation notes](reproducibility.md).
+
+## Full-disk results and magnetogram plots
+
+The [full-disk guide](../full-disk/README.md) explains the three included applications and lossless reconstruction-array storage. To display a downloaded HMI FITS map or a paired NPZ:
+
+```bash
+python -m magnetosr.plot_magnetogram --input full-disk/solar-maximum/hmi.fits --hdu 1 --output outputs/hmi.png
+python -m magnetosr.plot_magnetogram --input examples/data/20121027_034505.npz --key SPfield --output outputs/sp-patch.png
+```
+
+FITS plotting requires the solar dependencies. These plots use array coordinates; the original paper composites are included under each full-disk case.

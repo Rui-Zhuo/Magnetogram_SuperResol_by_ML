@@ -8,7 +8,7 @@ import numpy as np
 import torch
 import yaml
 from torch.utils.data import Dataset, DataLoader
-from .models import make
+from models import make
 from .coordinates import make_coord
 from .inference import read_sample
 
