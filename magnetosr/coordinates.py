@@ -1,4 +1,4 @@
-"""Pixel-centre coordinates in the original LTE (row, column) convention."""
+"""Pixel-centre coordinates in the LTE-warp (row, column) convention."""
 import torch
 
 

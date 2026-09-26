@@ -1,0 +1,29 @@
+seed: 42
+batch_size: 6
+learning_rate: 0.0001
+epochs: 300
+milestones:
+- 200
+- 400
+- 600
+- 800
+cc_weight: 0.01
+model:
+  name: pm-rcan-cc
+  args:
+    encoder_spec:
+      name: rcan
+      args:
+        no_upsampling: true
+        n_channels: 2
+        n_resgroups: 10
+        n_resblocks: 20
+        n_feats: 64
+        reduction: 16
+    target_h: 312
+    target_w: 336
+    use_pm: true
+    distance_scale: 960.0
+    pm_min: 0.5
+    pm_max: 1.5
+model_name: PM-RCAN-CC

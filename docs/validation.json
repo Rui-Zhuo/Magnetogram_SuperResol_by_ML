@@ -23,34 +23,40 @@
   },
   "checkpoints": [
     {
-      "name": "pm_lte",
+      "name": "pm_ltew_cc",
       "parameters": 15787939,
-      "load": "passed"
+      "load": "passed",
+      "display_name": "PM-LTEW-CC"
     },
     {
-      "name": "pm_lte_no_cc",
+      "name": "pm_ltew",
       "parameters": 15787939,
-      "load": "passed"
+      "load": "passed",
+      "display_name": "PM-LTEW"
     },
     {
-      "name": "lte_no_pm",
+      "name": "ltew_cc",
       "parameters": 15787939,
-      "load": "passed"
+      "load": "passed",
+      "display_name": "LTEW-CC"
     },
     {
-      "name": "lte_no_pm_no_cc",
+      "name": "ltew",
       "parameters": 15787939,
-      "load": "passed"
+      "load": "passed",
+      "display_name": "LTEW"
     },
     {
-      "name": "pm_rcan",
+      "name": "pm_rcan_cc",
       "parameters": 15295203,
-      "load": "passed"
+      "load": "passed",
+      "display_name": "PM-RCAN-CC"
     },
     {
-      "name": "pm_srcnn",
+      "name": "pm_srcnn_cc",
       "parameters": 13315,
-      "load": "passed"
+      "load": "passed",
+      "display_name": "PM-SRCNN-CC"
     }
   ],
   "split_counts": {
@@ -65,5 +71,23 @@
     "Training/retraining",
     "GPU validation",
     "Comparison of current code with existing research results"
-  ]
+  ],
+  "naming_update": {
+    "source": "Manuscript Table 2",
+    "models": [
+      "PM-LTEW-CC",
+      "PM-LTEW",
+      "LTEW-CC",
+      "LTEW",
+      "PM-RCAN-CC",
+      "PM-SRCNN-CC"
+    ],
+    "checks": [
+      "Configuration/checkpoint labels and architecture registrations",
+      "Weight checksums and state loading",
+      "Changed command entry points",
+      "Documentation links and single README test figure"
+    ],
+    "historical_result_comparison": false
+  }
 }

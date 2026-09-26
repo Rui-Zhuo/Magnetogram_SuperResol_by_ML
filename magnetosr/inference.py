@@ -56,7 +56,7 @@ def predict(model, hmi, radius, shape=(312, 336), chunk_size=8192):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--checkpoint', default='checkpoints/pm_lte.pth')
+    p.add_argument('--checkpoint', default='checkpoints/pm_ltew_cc.pth')
     p.add_argument('--input', type=Path, required=True, help='NPZ file or directory')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--device', default='cpu')

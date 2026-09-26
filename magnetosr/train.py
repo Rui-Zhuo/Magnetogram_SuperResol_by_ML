@@ -58,7 +58,7 @@ def run_epoch(model, loader, device, weight, optimizer=None):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--config', type=Path, default=Path('configs/train_pm_lte.yaml'))
+    p.add_argument('--config', type=Path, default=Path('configs/train_pm_ltew_cc.yaml'))
     p.add_argument('--data', type=Path, required=True)
     p.add_argument('--split', type=Path, default=Path('data/splits/dataset_split_10115.json'))
     p.add_argument('--output', type=Path, required=True)
@@ -91,9 +91,9 @@ def main():
         scheduler.step()
         improved=val_loss<best; best=min(best,val_loss)
         spec=copy.deepcopy(cfg['model']); spec['sd']=model.state_dict()
-        state=dict(model=spec,epoch=epoch,optimizer=optimizer.state_dict(),scheduler=scheduler.state_dict(),best=best)
+        state=dict(model=spec,model_name=cfg['model_name'],epoch=epoch,optimizer=optimizer.state_dict(),scheduler=scheduler.state_dict(),best=best)
         torch.save(state,a.output/'last.pth')
-        if improved: torch.save(dict(model=spec,epoch=epoch,normalization=200.),a.output/'best.pth')
+        if improved: torch.save(dict(model=spec,model_name=cfg['model_name'],epoch=epoch,normalization=200.),a.output/'best.pth')
         with (a.output/'loss.jsonl').open('a') as f: f.write(json.dumps(dict(epoch=epoch,train=train_loss,val=val_loss))+'\n')
         print(f'Epoch {epoch}: train={train_loss:.6f}, val={val_loss:.6f}',flush=True)
 

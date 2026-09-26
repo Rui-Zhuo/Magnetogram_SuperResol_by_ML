@@ -4,11 +4,11 @@
 
 The primary model is the 20260416 run, epoch 115. Its model specification and tensor values are retained; optimizer state is omitted from the public inference checkpoint. `checkpoints/manifest.json` identifies original and exported files with SHA-256 hashes. Additional checkpoints are the 20260831, 20260901, 20260902, 20260912 and 20260915 ablation runs.
 
-The LTE implementation comes from retained original source, with package-relative imports, CPU/CUDA device handling and an explicit no-position-modulation switch. RCAN/MLP parameter names are preserved. The paper's PM-LTEW model is registered as `lte`; its phase layer receives a two-dimensional cell-size vector.
+The LTE-warp implementation comes from retained original source, with package-relative imports, CPU/CUDA device handling and an explicit no-position-modulation switch. RCAN/MLP parameter names are preserved. The paper's PM-LTEW-CC model is registered as `lte-warp`; its phase layer receives a two-dimensional cell-size vector.
 
 ## Position modulation
 
-The original LTE path divides both HMI and projected radius by 200. For interpolated normalized radius `d`, the skip connection is:
+The LTE-warp path divides both HMI and projected radius by 200. For interpolated normalized radius `d`, the skip connection is:
 
 ```python
 dist_norm = (d - d.min()) / 960
