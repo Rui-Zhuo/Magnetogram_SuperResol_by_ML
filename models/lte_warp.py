@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 import models
 from .models import register
-from magnetosr.coordinates import make_coord
+from models.coordinates import make_coord
 
 import numpy as np
 

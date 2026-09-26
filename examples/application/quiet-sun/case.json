@@ -1,0 +1,30 @@
+{
+  "case": "quiet-sun",
+  "title": "Quiet Sun: network and internetwork",
+  "paper_figure": 9,
+  "model": "PM-LTEW-CC",
+  "hmi_record": "2019.04.07_06:24:00_TAI",
+  "sp_observation": "20190407_062200",
+  "inputs": [
+    {
+      "file": "hmi.fits",
+      "sha256": "97915e7d400aed2f627e51a4c008295a54d05c7c81edaa11bbedc3fb5c041418",
+      "observation_time": "2019-04-07T06:22:38.600"
+    },
+    {
+      "file": "sp.fits",
+      "sha256": "8be5e4e500647ed18155af15b6414dab16bb8d4336bec9bc58fbf4e9cfda5a1e",
+      "observation_start": "2019-04-07T06:22:00.056",
+      "observation_end": "2019-04-07T06:54:20.258"
+    }
+  ],
+  "zoom_box": [
+    2300,
+    2600,
+    2080,
+    2380
+  ],
+  "full_disk_limit": 50,
+  "zoom_limit": 50,
+  "availability": "Paper figure and observation metadata only. Download inputs and generate arrays with the full-disk workflow."
+}

@@ -1,54 +1,58 @@
 # HMI to Hinode/SP magnetogram reconstruction
 
-Code and pretrained models for **Full-Disk Solar Magnetogram Reconstruction to Hinode/SP Resolution Using an Improved Arbitrary-Scale Super-Resolution Network**. **PM-LTEW-CC** is the primary model; model names follow Table 2.
+Code and pretrained models for **Full-Disk Solar Magnetogram Reconstruction to Hinode/SP Resolution Using an Improved Arbitrary-Scale Super-Resolution Network**. Model names follow manuscript Table 2; **PM-LTEW-CC** is the primary model.
 
-## Full-disk applications
+## Installation
 
-**Solar maximum — Figure 6**
-
-![Full-disk reconstruction at solar maximum](full-disk/solar-maximum/paper-figure.png)
-
-**Solar minimum — Figure 7**
-
-![Full-disk reconstruction at solar minimum](full-disk/solar-minimum/paper-figure.png)
-
-The [three full-disk cases](full-disk/README.md) include these results and the quiet-Sun example from the appendix, with HMI/SP inputs, saved reconstruction arrays and paper figures.
-
-## Repository layout
-
-| Folder | Contents |
-|---|---|
-| [`models/`](models) | Model architectures, including LTE-warp |
-| [`pre-trained/`](pre-trained) | Six pretrained models and checksums |
-| [`configs/`](configs) | Training and test configurations named by model |
-| [`examples/`](examples) | Paired test data and existing predictions |
-| [`full-disk/`](full-disk) | Three full-disk applications |
-| [`magnetosr/`](magnetosr) | Python tools for download, preparation, training, inference, metrics and plotting |
-| [`data/`](data) · [`docs/`](docs) | Dataset split, metadata and detailed instructions |
-
-## Quick start
-
-Python 3.10 or newer; run from the repository root:
+Python 3.10 or newer. Run from the repository root:
 
 ```bash
 git clone https://github.com/Rui-Zhuo/Magnetogram_SuperResol_by_ML.git
 cd Magnetogram_SuperResol_by_ML
-python -m pip install -e .
-python -m magnetosr.inference --config configs/test_pm_ltew_cc.yaml
+python -m pip install -e ".[solar]"
 ```
 
-Inference defaults to CPU; add `--device cuda` for a CUDA-enabled PyTorch installation. Available models are **PM-LTEW-CC**, **PM-LTEW**, **LTEW-CC**, **LTEW**, **PM-RCAN-CC** and **PM-SRCNN-CC**. PM denotes position modulation; CC denotes the correlation-coefficient loss term. See [model configurations](configs/README.md).
+## Dataset preparation
 
-The preparation pipeline downloads HMI/SP observations, aligns and crops them, and generates paired NPZ datasets. See [commands](docs/usage.md), [data preparation](docs/data_access.md) and [metric definitions](docs/metrics.md).
+The workflow downloads HMI/SP observations, aligns and crops them, and generates paired NPZ files. See [`prep-dataset/`](prep-dataset/README.md) for commands. Three paired examples and the exact train/validation/test split are included; the complete dataset will be archived separately.
 
-## Test example
+## Models, training and inference
 
-One existing paired test result; its input, reference and saved prediction are included under `examples/`.
+[`models/`](models) contains the architectures, [`pre-trained/`](pre-trained) the six pretrained models, and [`configs/`](configs/README.md) their training/test settings: **PM-LTEW-CC**, **PM-LTEW**, **LTEW-CC**, **LTEW**, **PM-RCAN-CC** and **PM-SRCNN-CC**. PM denotes position modulation; CC denotes the correlation-coefficient loss term. The LTEW variants share the LTE-warp implementation.
+
+```bash
+python -m training.train --config configs/train_pm_ltew_cc.yaml --data data/paired --output outputs/training --device cuda
+python -m inference.predict --config configs/test_pm_ltew_cc.yaml
+```
+
+Inference defaults to CPU; add `--device cuda` for a CUDA-enabled PyTorch installation. Training requires the prepared dataset; the included examples are sufficient for inference.
+
+## Evaluation and test example
+
+[`evaluation/`](evaluation/README.md) contains one shared set of [metric definitions](docs/metrics.md), the evaluator and plotting tools.
+
+```bash
+python -m evaluation.evaluate --predictions outputs/pm_ltew_cc --data examples/data --output outputs/evaluation
+```
+
+Existing paired test result, with input, reference and saved prediction in `examples/`:
 
 ![Paired test reconstruction](examples/figures/20121027_034505.png)
 
-## Data and attribution
+## Full-disk applications
 
-Example data, the dataset split and three full-disk results are included. The complete paired dataset will be archived separately.
+[`full-disk/`](full-disk/README.md) provides the HMI download → patch inference → assembly → background filling → plotting workflow. [`examples/application/`](examples/application/README.md) contains the three paper-case previews and observation information. Large full-disk FITS/NPZ files are not included in the current tree.
 
-Based on [LTEW](https://github.com/jaewon-lee-b/ltew) and [SOT/SP pointing updates](https://github.com/dfouhey/SOTSPPointing). Please cite the accompanying manuscript and upstream methods and data sources; see [attribution](third_party/README.md).
+**Solar maximum — Figure 6**
+
+![Full-disk reconstruction at solar maximum](examples/application/solar-maximum/paper-figure.png)
+
+**Solar minimum — Figure 7**
+
+![Full-disk reconstruction at solar minimum](examples/application/solar-minimum/paper-figure.png)
+
+The [quiet-Sun case](examples/application/quiet-sun/paper-figure.png) is shown in the appendix.
+
+## Attribution
+
+Based on [LTEW](https://github.com/jaewon-lee-b/ltew) and [SOT/SP pointing updates](https://github.com/dfouhey/SOTSPPointing). Please cite the accompanying manuscript, upstream methods and data sources; see [attribution](third_party/README.md) and [data access](docs/data_access.md).

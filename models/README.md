@@ -6,4 +6,4 @@
 - `rcan.py` and `mlp.py`: shared encoder and prediction layers.
 - `models.py` and `__init__.py`: model registry and factory.
 
-Names and experiment settings follow manuscript Table 2; see [configs](../configs/README.md). Training, inference and data processing commands are in [magnetosr](../magnetosr/README.md).
+Names and experiment settings follow manuscript Table 2; see [configs](../configs/README.md). See [usage](../docs/usage.md) for training, inference and data processing commands.

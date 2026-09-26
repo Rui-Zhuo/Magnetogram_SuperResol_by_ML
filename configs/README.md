@@ -11,7 +11,7 @@ Names follow Table 2 of the manuscript.
 | PM-RCAN-CC | [train_pm_rcan_cc.yaml](train_pm_rcan_cc.yaml) | [test_pm_rcan_cc.yaml](test_pm_rcan_cc.yaml) | [pm_rcan_cc.pth](../pre-trained/pm_rcan_cc.pth) |
 | PM-SRCNN-CC | [train_pm_srcnn_cc.yaml](train_pm_srcnn_cc.yaml) | [test_pm_srcnn_cc.yaml](test_pm_srcnn_cc.yaml) | [pm_srcnn_cc.pth](../pre-trained/pm_srcnn_cc.pth) |
 
-Use `python -m magnetosr.train --config configs/train_pm_ltew_cc.yaml --data data/paired --output outputs/training` for training and `python -m magnetosr.inference --config configs/test_pm_ltew_cc.yaml` for inference. Paths are relative to the repository root. Explicit command-line inference options override YAML values.
+Use `python -m training.train --config configs/train_pm_ltew_cc.yaml --data data/paired --output outputs/training` for training and `python -m inference.predict --config configs/test_pm_ltew_cc.yaml` for inference. Paths are relative to the repository root. Explicit command-line inference options override YAML values.
 
 The four LTEW variants share `models/lte_warp.py`, registered as `lte-warp`; `use_pm` and `cc_weight` distinguish the experiments. PM-RCAN-CC and PM-SRCNN-CC have separate architecture files. Bicubic, Empirical-D and Empirical-Z are non-learned baselines without checkpoints.
 

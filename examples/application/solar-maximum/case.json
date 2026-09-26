@@ -1,0 +1,30 @@
+{
+  "case": "solar-maximum",
+  "title": "Solar maximum",
+  "paper_figure": 6,
+  "model": "PM-LTEW-CC",
+  "hmi_record": "2024.05.05_12:00:00_TAI",
+  "sp_observation": "20240505_115853",
+  "inputs": [
+    {
+      "file": "hmi.fits",
+      "sha256": "cec775f61f133466e942f210122967347523eb2ed573e0807c796b30d530449e",
+      "observation_time": "2024-05-05T11:58:42.400"
+    },
+    {
+      "file": "sp.fits",
+      "sha256": "419c1d4980c40b226cf0d0275c0586d631546489775fe0053d160429e32416d5",
+      "observation_start": "2024-05-05T11:58:53.408",
+      "observation_end": "2024-05-05T12:54:10.222"
+    }
+  ],
+  "zoom_box": [
+    1310,
+    1550,
+    2410,
+    2650
+  ],
+  "full_disk_limit": 200,
+  "zoom_limit": 2000,
+  "availability": "Paper figure and observation metadata only. Download inputs and generate arrays with the full-disk workflow."
+}

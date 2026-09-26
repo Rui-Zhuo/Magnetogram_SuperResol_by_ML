@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,5 +12,6 @@ dependencies = ["numpy>=1.23,<3", "scipy>=1.10", "torch>=2.2", "scikit-image>=0.
 [project.optional-dependencies]
 solar = ["astropy>=5", "sunpy[map,net]>=5", "reproject>=0.10"]
 
-[tool.setuptools.packages.find]
-include = ["magnetosr*", "models*"]
+[tool.setuptools]
+packages = ["models", "prep_dataset", "evaluation", "training", "inference", "full_disk"]
+package-dir = {prep_dataset = "prep-dataset", full_disk = "full-disk"}

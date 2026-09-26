@@ -1,114 +1,61 @@
 {
-  "scope": "File integrity, lossless packaging and code-entry checks; no comparison of model predictions with historical results or figures.",
+  "scope": "Package layout, command entry points, model loading and synthetic full-disk workflow checks. No comparison with paper results or historical predictions.",
   "environment": {
     "python": "3.10.7",
     "torch": "2.9.0+cpu",
     "numpy": "1.26.4",
-    "scipy": "1.9.1",
-    "skimage": "0.19.3",
-    "platform": "Windows",
-    "cuda": false
+    "device": "cpu"
   },
-  "syntax_files": 21,
+  "editable_install": "passed with setuptools >=64; hyphenated folders map to prep_dataset and full_disk",
   "cli_help": {
-    "download": "passed",
-    "coalign": "passed",
-    "prepare": "passed",
-    "split": "passed",
-    "train": "passed",
-    "inference": "passed",
-    "evaluate": "passed",
-    "plot_samples": "passed",
-    "full_disk": "passed",
-    "plot_magnetogram": "passed"
+    "prep_dataset.download": "passed",
+    "prep_dataset.coalign": "passed",
+    "prep_dataset.prepare": "passed",
+    "prep_dataset.split": "passed",
+    "training.train": "passed",
+    "inference.predict": "passed",
+    "evaluation.evaluate": "passed",
+    "evaluation.plot_samples": "passed",
+    "evaluation.plot_magnetogram": "passed",
+    "full_disk.download": "passed",
+    "full_disk.generate": "passed",
+    "full_disk.plot": "passed"
   },
   "checkpoints": [
     {
-      "name": "pm_ltew_cc",
-      "parameters": 15787939,
-      "load": "passed",
-      "display_name": "PM-LTEW-CC"
+      "model": "PM-LTEW-CC",
+      "load_and_checksum": "passed"
     },
     {
-      "name": "pm_ltew",
-      "parameters": 15787939,
-      "load": "passed",
-      "display_name": "PM-LTEW"
+      "model": "PM-LTEW",
+      "load_and_checksum": "passed"
     },
     {
-      "name": "ltew_cc",
-      "parameters": 15787939,
-      "load": "passed",
-      "display_name": "LTEW-CC"
+      "model": "LTEW-CC",
+      "load_and_checksum": "passed"
     },
     {
-      "name": "ltew",
-      "parameters": 15787939,
-      "load": "passed",
-      "display_name": "LTEW"
+      "model": "LTEW",
+      "load_and_checksum": "passed"
     },
     {
-      "name": "pm_rcan_cc",
-      "parameters": 15295203,
-      "load": "passed",
-      "display_name": "PM-RCAN-CC"
+      "model": "PM-RCAN-CC",
+      "load_and_checksum": "passed"
     },
     {
-      "name": "pm_srcnn_cc",
-      "parameters": 13315,
-      "load": "passed",
-      "display_name": "PM-SRCNN-CC"
+      "model": "PM-SRCNN-CC",
+      "load_and_checksum": "passed"
     }
   ],
-  "split_counts": {
-    "train": 6069,
-    "val": 2023,
-    "test": 2023
-  },
-  "test_examples": 3,
+  "test_config_override": "passed with stubbed prediction",
+  "full_disk_synthetic_integration": "passed: actual FITS/WCS, patch assembly, masks, NPZ, metadata and plotting; network prediction stubbed; library caches redirected to the workspace",
+  "full_disk_unit_tests": "3 passed: grid, placement/fallback, model-error propagation",
+  "documentation": "passed: local links and paper-order sections",
   "not_run": [
-    "Full raw archive download",
-    "Full paired dataset regeneration",
+    "Remote archive downloads (require JSOC registration)",
+    "Full-disk neural inference",
     "Training/retraining",
-    "GPU validation",
-    "Comparison of current code with existing research results"
-  ],
-  "naming_update": {
-    "source": "Manuscript Table 2",
-    "models": [
-      "PM-LTEW-CC",
-      "PM-LTEW",
-      "LTEW-CC",
-      "LTEW",
-      "PM-RCAN-CC",
-      "PM-SRCNN-CC"
-    ],
-    "checks": [
-      "Configuration/checkpoint labels and architecture registrations",
-      "Weight checksums and state loading",
-      "Changed command entry points",
-      "Documentation links and single README test figure"
-    ],
-    "historical_result_comparison": false
-  },
-  "test_config_overrides": "passed (stubbed prediction; no research-result comparison)",
-  "full_disk": {
-    "solar-maximum": {
-      "parts": 12,
-      "checksums": "passed",
-      "lossless_array_reassembly": "passed"
-    },
-    "solar-minimum": {
-      "parts": 12,
-      "checksums": "passed",
-      "lossless_array_reassembly": "passed"
-    },
-    "quiet-sun": {
-      "parts": 12,
-      "checksums": "passed",
-      "lossless_array_reassembly": "passed"
-    }
-  },
-  "publication_layout": "passed: local links, two main-text full-disk images, one test image",
-  "magnetogram_plot": "passed: included HMI FITS displayed and image inspected"
+    "GPU execution",
+    "Comparison with historical research results"
+  ]
 }

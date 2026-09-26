@@ -36,6 +36,6 @@ Local-registration kernels are retained. Removed SciPy `interp2d` calls are repl
 
 Examples use the supplied paired NPZ data, saved predictions and existing figure PNGs. `examples/manifest.json` maps observation IDs to original prediction filenames. Public prediction NPZ files contain `HMIfield`, `Txy`, `SPfield` from paired data and saved `pred` reshaped to the target grid. Predictions are not recalculated to replace existing research results. The evaluator reads its reference from the paired-data directory rather than relying on the historical output-file target normalization.
 
-The three full-disk cases preserve the existing input FITS files, reconstructed arrays and paper figures. Arrays are split into losslessly compressed row slabs; manifests record shapes, dtypes and checksums.
+The three full-disk paper figures and observing information are in `examples/application`. Large existing arrays are omitted from the current tree. `full-disk` provides download, centred patch inference, tile assembly, cubic filling and plotting commands, adapted from the retained research scripts. Newly generated files include a source mask distinguishing predictions, interpolation fallback and invalid pixels.
 
 Release checks cover file completeness, syntax, entry-point availability, split membership and model loading. Agreement between current code, historical results and paper figures is outside this release-preparation scope. A complete data archive remains a separate task.

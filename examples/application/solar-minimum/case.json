@@ -1,0 +1,30 @@
+{
+  "case": "solar-minimum",
+  "title": "Solar minimum",
+  "paper_figure": 7,
+  "model": "PM-LTEW-CC",
+  "hmi_record": "2019.01.25_01:00:00_TAI",
+  "sp_observation": "20190125_010005",
+  "inputs": [
+    {
+      "file": "hmi.fits",
+      "sha256": "a423c4a2285a4d8b1a4b71e118b8d53b132a5232d7e7ee4c89bc2fadd862458b",
+      "observation_time": "2019-01-25T00:58:30.200"
+    },
+    {
+      "file": "sp.fits",
+      "sha256": "3d11643158a00074060f1c0bf7b0514a16b1313913779f5697bcbefc1277a561",
+      "observation_start": "2019-01-25T01:00:05.223",
+      "observation_end": "2019-01-25T01:43:28.272"
+    }
+  ],
+  "zoom_box": [
+    2300,
+    2450,
+    1500,
+    1650
+  ],
+  "full_disk_limit": 50,
+  "zoom_limit": 600,
+  "availability": "Paper figure and observation metadata only. Download inputs and generate arrays with the full-disk workflow."
+}
