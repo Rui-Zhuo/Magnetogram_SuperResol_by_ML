@@ -1,0 +1,95 @@
+train_dataset:
+  dataset:
+    name: paired-npz-folder
+    args:
+      root_path: data/paired
+      split_file: data/splits/dataset_split_10115.json
+      split_key: train
+      split_num: 6069
+      repeat: 1
+      cache: in_memory
+      input_key:
+      - HMIfield
+      - Txy
+      target_key: SPfield
+  wrapper:
+    name: sr-asp-implicit-paired-npz
+    args:
+      scale: 1.56
+      scale2: 1.68
+      augment: true
+      fixed_lr_h: 200
+      fixed_lr_w: 200
+  batch_size: 6
+val_dataset:
+  dataset:
+    name: paired-npz-folder
+    args:
+      root_path: data/paired
+      split_file: data/splits/dataset_split_10115.json
+      split_key: val
+      split_num: 2023
+      repeat: 1
+      cache: in_memory
+      input_key:
+      - HMIfield
+      - Txy
+      target_key: SPfield
+  wrapper:
+    name: sr-asp-implicit-paired-npz
+    args:
+      scale: 1.56
+      scale2: 1.68
+      augment: false
+      fixed_lr_h: 200
+      fixed_lr_w: 200
+  batch_size: 6
+data_norm:
+  inp:
+    sub:
+    - 0
+    div:
+    - 200
+  gt:
+    sub:
+    - 0
+    div:
+    - 200
+model:
+  name: lte
+  args:
+    encoder_spec:
+      name: rcan
+      args:
+        no_upsampling: true
+        n_channels: 2
+    imnet_spec:
+      name: mlp
+      args:
+        out_dim: 1
+        hidden_list:
+        - 256
+        - 256
+        - 256
+    hidden_dim: 256
+optimizer:
+  name: adamW
+  args:
+    lr: 0.0001
+epoch_max: 160
+cc_weight: 0.0
+loss_type: cc
+loss_scales:
+- 1
+- 2
+- 4
+multi_step_lr:
+  milestones:
+  - 200
+  - 400
+  - 600
+  - 800
+  gamma: 0.5
+epoch_val: 1
+epoch_save: 10
+resume: null

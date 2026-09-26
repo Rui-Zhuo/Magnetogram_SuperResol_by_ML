@@ -1,0 +1,74 @@
+[
+  {
+    "name": "pm_lte",
+    "source_run": "20260416",
+    "epoch": 115,
+    "file": "checkpoints/pm_lte.pth",
+    "bytes": 63803651,
+    "sha256": "b6ce9bde390419679a9dea8a8b10113687dfd56dedc16ec18b37f3fafbb437f8",
+    "source_sha256": "f4c8f864705769e3f4a0087ee46d4a41943d849a140f6eb0e7fce2291141e544",
+    "use_pm": true,
+    "cc_weight": 0.01,
+    "architecture": "lte"
+  },
+  {
+    "name": "pm_lte_no_cc",
+    "source_run": "20260831",
+    "epoch": 139,
+    "file": "checkpoints/pm_lte_no_cc.pth",
+    "bytes": 63818961,
+    "sha256": "778d0b9878a25ffcf425e292ad92f538e3582b3cdd55d746d89e9be8d7d36caf",
+    "source_sha256": "ab3c64d659e607ff3367b7e8679f58edcc6484e43cefa37cab3ea5e521a0e760",
+    "use_pm": true,
+    "cc_weight": 0.0,
+    "architecture": "lte"
+  },
+  {
+    "name": "lte_no_pm",
+    "source_run": "20260901",
+    "epoch": 154,
+    "file": "checkpoints/lte_no_pm.pth",
+    "bytes": 63814026,
+    "sha256": "be3008447c56149d572c4683363edf8d13e3f15acfcade0d5380125af4da583d",
+    "source_sha256": "12b39fdfe3784d43446b1d13dfa5b3f2ca6c241e4b7cf8bc8518bd7c4c7da312",
+    "use_pm": false,
+    "cc_weight": 0.01,
+    "architecture": "lte"
+  },
+  {
+    "name": "lte_no_pm_no_cc",
+    "source_run": "20260902",
+    "epoch": 81,
+    "file": "checkpoints/lte_no_pm_no_cc.pth",
+    "bytes": 63823896,
+    "sha256": "8c74da8796a7fe74edff14f3f49d319b51d0adc95d81e2d9d2beaa087e7584ec",
+    "source_sha256": "48f532b638e85ea4de0ec94f646a5940e5518fe59e33cd789732437514186448",
+    "use_pm": false,
+    "cc_weight": 0.0,
+    "architecture": "lte"
+  },
+  {
+    "name": "pm_rcan",
+    "source_run": "20260912",
+    "epoch": 103,
+    "file": "checkpoints/pm_rcan.pth",
+    "bytes": 61835771,
+    "sha256": "16df2ec30acd87cff29841338387eb036a7185dd165efad8a360319d5873255c",
+    "source_sha256": "e53e710c65bcd55780ac422df4d50242d8871dfc9f8048c6bff245e618fe22e9",
+    "use_pm": true,
+    "cc_weight": 0.01,
+    "architecture": "pm-rcan-fixed"
+  },
+  {
+    "name": "pm_srcnn",
+    "source_run": "20260915",
+    "epoch": 198,
+    "file": "checkpoints/pm_srcnn.pth",
+    "bytes": 57243,
+    "sha256": "772cc30762e0951f0d1490b781208614d78078e43f31d3653d20aa4b2eea93fc",
+    "source_sha256": "4839584f256fe8c3d4c5bf52bca85e4f4e5cedc1c61eb6ea0167241cadf225cd",
+    "use_pm": true,
+    "cc_weight": 0.01,
+    "architecture": "pm-srcnn-fixed"
+  }
+]

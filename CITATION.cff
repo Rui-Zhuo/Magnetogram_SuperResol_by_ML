@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Please cite the accompanying manuscript and the upstream methods/data archives described in README.md."
+title: "HMI to Hinode/SP Magnetogram Reconstruction"
+type: software
+authors:
+  - family-names: Zhuo
+    given-names: Rui
+repository-code: "https://github.com/Rui-Zhuo/Magnetogram_SuperResol_by_ML"
+version: 0.1.0
+date-released: 2026-09-26
+license: BSD-3-Clause

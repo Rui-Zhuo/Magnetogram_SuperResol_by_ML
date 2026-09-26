@@ -1,0 +1,69 @@
+{
+  "date": "2026-09-26",
+  "scope": "Publication integrity and code-entry checks only; no comparison against historical figures/results.",
+  "environment": {
+    "python": "3.10.7",
+    "torch": "2.9.0+cpu",
+    "numpy": "1.26.4",
+    "scipy": "1.9.1",
+    "skimage": "0.19.3",
+    "platform": "Windows",
+    "cuda": false
+  },
+  "syntax_files": 20,
+  "cli_help": {
+    "download": "passed",
+    "coalign": "passed",
+    "prepare": "passed",
+    "split": "passed",
+    "train": "passed",
+    "inference": "passed",
+    "evaluate": "passed",
+    "plot_samples": "passed"
+  },
+  "checkpoints": [
+    {
+      "name": "pm_lte",
+      "parameters": 15787939,
+      "load": "passed"
+    },
+    {
+      "name": "pm_lte_no_cc",
+      "parameters": 15787939,
+      "load": "passed"
+    },
+    {
+      "name": "lte_no_pm",
+      "parameters": 15787939,
+      "load": "passed"
+    },
+    {
+      "name": "lte_no_pm_no_cc",
+      "parameters": 15787939,
+      "load": "passed"
+    },
+    {
+      "name": "pm_rcan",
+      "parameters": 15295203,
+      "load": "passed"
+    },
+    {
+      "name": "pm_srcnn",
+      "parameters": 13315,
+      "load": "passed"
+    }
+  ],
+  "split_counts": {
+    "train": 6069,
+    "val": 2023,
+    "test": 2023
+  },
+  "test_examples": 3,
+  "not_run": [
+    "Full raw archive download",
+    "Full paired dataset regeneration",
+    "Training/retraining",
+    "GPU validation",
+    "Comparison of current code with existing research results"
+  ]
+}

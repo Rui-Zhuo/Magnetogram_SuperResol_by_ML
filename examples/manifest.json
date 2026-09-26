@@ -1,0 +1,17 @@
+[
+  {
+    "sample": "20121027_034505.npz",
+    "split": "test",
+    "original_prediction": "test_sample_46_idx_1987.npz"
+  },
+  {
+    "sample": "20130123_193005.npz",
+    "split": "test",
+    "original_prediction": "test_sample_44_idx_865.npz"
+  },
+  {
+    "sample": "20191031_181445.npz",
+    "split": "test",
+    "original_prediction": "test_sample_45_idx_696.npz"
+  }
+]
