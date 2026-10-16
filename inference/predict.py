@@ -1,5 +1,7 @@
-"""Portable CPU/CUDA inference, preserving historical query normalization."""
+"""CPU/CUDA inference with explicit patch-center and legacy PM behavior."""
 import argparse
+import copy
+import warnings
 from pathlib import Path
 import numpy as np
 import torch
@@ -8,9 +10,20 @@ import models
 from models.coordinates import make_coord
 
 
-def load_model(path, device='cpu'):
+def load_model(path, device='cpu', position_mode=None):
     checkpoint = torch.load(path, map_location='cpu', weights_only=True)
-    model = models.make(checkpoint['model'], load_sd=True).to(device).eval()
+    spec = copy.deepcopy(checkpoint['model'])
+    if position_mode is not None:
+        if spec['name'] != 'lte-warp':
+            raise ValueError('position_mode overrides are supported only for the LTEW decoder')
+        recorded_mode = spec['args'].get('position_mode', 'legacy_query_min')
+        if position_mode != recorded_mode:
+            warnings.warn(f'Overriding checkpoint PM from {recorded_mode} to {position_mode} changes '
+                          'predictions. This override is not a verified reproduction of the saved '
+                          'paper results; the retained checkpoint tensors are unchanged.',
+                          UserWarning, stacklevel=2)
+        spec['args']['position_mode'] = position_mode
+    model = models.make(spec, load_sd=True).to(device).eval()
     return model
 
 
@@ -28,7 +41,7 @@ def read_sample(path):
 
 @torch.inference_mode()
 def predict(model, hmi, radius, shape=(312, 336), chunk_size=8192):
-    """Return a Gauss map. Chunks share the full-grid distance minimum."""
+    """Return a Gauss map; both PM versions are independent of query chunking."""
     if chunk_size <= 0:
         raise ValueError('chunk_size must be positive')
     device = next(model.parameters()).device
@@ -39,7 +52,7 @@ def predict(model, hmi, radius, shape=(312, 336), chunk_size=8192):
     cell[..., 1] *= 2 / shape[1]
     # The original formula used distn.min() over the entire query tensor.
     # Calculating it per chunk would change the output near chunk boundaries.
-    if hasattr(model, 'query_distance_min'):
+    if getattr(model, 'position_mode', None) == 'legacy_query_min' and model.use_pm:
         dist = F.grid_sample(inp[:, 1:2], coord.flip(-1).unsqueeze(1),
                              mode='bilinear', padding_mode='border', align_corners=False)
         model.query_distance_min = dist.min()
@@ -58,6 +71,8 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--config', type=Path, help='Test YAML; explicit options override its values')
     p.add_argument('--checkpoint')
+    p.add_argument('--position-mode', choices=['patch_center', 'legacy_query_min'],
+                   help='Explicit LTEW PM override; reusing a legacy checkpoint changes predictions')
     p.add_argument('--input', type=Path, help='NPZ file or directory')
     p.add_argument('--output', type=Path)
     p.add_argument('--device')
@@ -67,7 +82,7 @@ def main():
     p.add_argument('--threads', type=int)
     a = p.parse_args()
     defaults = dict(checkpoint='pre-trained/pm_ltew_cc.pth', device='cpu',
-                    height=312, width=336, chunk_size=8192, threads=4)
+                    height=312, width=336, chunk_size=8192, threads=4, position_mode=None)
     if a.config:
         import yaml
         config = yaml.safe_load(a.config.read_text(encoding='utf-8'))
@@ -82,7 +97,7 @@ def main():
         p.error('Provide input/output in --config or as command options')
     a.input, a.output = Path(a.input), Path(a.output)
     torch.set_num_threads(a.threads)
-    model = load_model(a.checkpoint, a.device)
+    model = load_model(a.checkpoint, a.device, a.position_mode)
     files = [a.input] if a.input.is_file() else sorted(a.input.glob('*.npz'))
     if not files:
         p.error('No NPZ samples found')

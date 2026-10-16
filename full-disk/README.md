@@ -30,11 +30,11 @@ The workflow follows the retained research scripts:
 
 Outputs:
 
-- `reconstruction.npz`: `SRfield` (float32), `SRFfield` (float64) and `source_mask` (uint8: 0 invalid, 1 model, 2 interpolation).
+- `reconstruction.npz`: `SRfield` (float32), `SRFfield` (float64), `quality_flag` (uint8: 1 finite model prediction; 0 interpolation fallback, no model coverage, or remaining invalid value), and `source_mask` (uint8: 0 invalid, 1 model, 2 interpolation). The binary flag has the same shape as the reconstructed field; `quality_flag_values` and `quality_flag_meanings` provide its definitions inside the NPZ.
 - `manifest.json`: model/input checksums, crop, scale, orientation, coordinate mapping and per-patch status.
 - `input-header.txt`: original input FITS header for coordinate provenance.
 
-The mask describes newly generated outputs; it is not a recovered mask for historical paper results. Model errors stop the command rather than silently substituting interpolation. Pixel values are in G; coordinate provenance is supplied separately instead of assigning an unverified output WCS.
+The masks describe pixel provenance, not uncertainty or reconstruction accuracy, and apply to newly generated outputs. They are not recovered masks for historical paper results. Model errors stop the command rather than silently substituting interpolation. Pixel values are in G; coordinate provenance is supplied separately instead of assigning an unverified output WCS.
 
 ## 3. Plot the result
 

@@ -9,7 +9,11 @@
     "use_pm": true,
     "cc_weight": 0.01,
     "architecture": "lte-warp",
-    "display_name": "PM-LTEW-CC"
+    "display_name": "PM-LTEW-CC",
+    "compatibility_pm_mode": "legacy_query_min",
+    "checkpoint_pm_version_recorded": false,
+    "phase_input_features": 2,
+    "patch_center_override_result_validation": "not established"
   },
   {
     "name": "pm_ltew",
@@ -21,7 +25,11 @@
     "use_pm": true,
     "cc_weight": 0.0,
     "architecture": "lte-warp",
-    "display_name": "PM-LTEW"
+    "display_name": "PM-LTEW",
+    "compatibility_pm_mode": "legacy_query_min",
+    "checkpoint_pm_version_recorded": false,
+    "phase_input_features": 2,
+    "patch_center_override_result_validation": "not established"
   },
   {
     "name": "ltew_cc",
@@ -33,7 +41,11 @@
     "use_pm": false,
     "cc_weight": 0.01,
     "architecture": "lte-warp",
-    "display_name": "LTEW-CC"
+    "display_name": "LTEW-CC",
+    "compatibility_pm_mode": "legacy_query_min",
+    "checkpoint_pm_version_recorded": false,
+    "phase_input_features": 2,
+    "patch_center_override_result_validation": "not established"
   },
   {
     "name": "ltew",
@@ -45,7 +57,11 @@
     "use_pm": false,
     "cc_weight": 0.0,
     "architecture": "lte-warp",
-    "display_name": "LTEW"
+    "display_name": "LTEW",
+    "compatibility_pm_mode": "legacy_query_min",
+    "checkpoint_pm_version_recorded": false,
+    "phase_input_features": 2,
+    "patch_center_override_result_validation": "not established"
   },
   {
     "name": "pm_rcan_cc",
@@ -57,7 +73,9 @@
     "use_pm": true,
     "cc_weight": 0.01,
     "architecture": "pm-rcan-cc",
-    "display_name": "PM-RCAN-CC"
+    "display_name": "PM-RCAN-CC",
+    "compatibility_pm_mode": "patch_center",
+    "checkpoint_pm_version_recorded": false
   },
   {
     "name": "pm_srcnn_cc",
@@ -69,6 +87,8 @@
     "use_pm": true,
     "cc_weight": 0.01,
     "architecture": "pm-srcnn-cc",
-    "display_name": "PM-SRCNN-CC"
+    "display_name": "PM-SRCNN-CC",
+    "compatibility_pm_mode": "patch_center",
+    "checkpoint_pm_version_recorded": false
   }
 ]

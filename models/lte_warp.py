@@ -1,4 +1,9 @@
-"""PM-LTEW-CC inference; normalized, per-query radius offset."""
+"""Portable two-cell Fourier decoder with explicit position-modulation versions.
+
+New models use one patch-center weight. The legacy query-minimum rule is
+retained explicitly for the distributed, unmodified historical checkpoints.
+"""
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,9 +17,20 @@ import numpy as np
 @register('lte-warp')
 class LTEWarp(nn.Module):
 
-    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, use_pm=True):
+    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, use_pm=True,
+                 position_mode='patch_center', position_input_scale=200.0,
+                 solar_radius_arcsec=960.0, pm_min=0.5, pm_max=1.5):
         super().__init__()
+        if position_mode not in ('patch_center', 'legacy_query_min'):
+            raise ValueError('position_mode must be patch_center or legacy_query_min')
+        if not all(math.isfinite(x) and x > 0 for x in
+                   (position_input_scale, solar_radius_arcsec, pm_min, pm_max)) or pm_min > pm_max:
+            raise ValueError('Position scales and ordered modulation bounds must be finite and positive')
         self.use_pm = use_pm
+        self.position_mode = position_mode
+        self.position_input_scale = float(position_input_scale)
+        self.solar_radius_arcsec = float(solar_radius_arcsec)
+        self.pm_min, self.pm_max = float(pm_min), float(pm_max)
         self.query_distance_min = None
         self.encoder = models.make(encoder_spec)
         self.coef = nn.Conv2d(self.encoder.out_dim, hidden_dim, 3, padding=1)
@@ -37,6 +53,9 @@ class LTEWarp(nn.Module):
         return self.feat
 
     def query_rgb(self, coord, cell=None):
+        if cell is None or cell.shape[:-1] != coord.shape[:-1] or cell.shape[-1] != 2:
+            raise ValueError('The portable decoder requires two cell-size features per query; '
+                             'ten-feature Jacobian checkpoints require their original pipeline')
         feat = self.feat
         coef = self.coeff
         freq = self.freqq
@@ -110,14 +129,20 @@ class LTEWarp(nn.Module):
         field = grid_out[:, :, 0:1]
         distn = grid_out[:, :, 1:2]
 
-        distance_min = distn.min() if self.query_distance_min is None else self.query_distance_min
-        dist_norm = (distn - distance_min) / 960
-        mod_factor = 1 - self.gamma * dist_norm + self.beta
-        mod_factor = mod_factor.clamp(0.5, 1.5)
-        field_modul = field * mod_factor
-
-
-        ret = ret + (field_modul if self.use_pm else field)
+        if self.use_pm:
+            if self.position_mode == 'patch_center':
+                # Txy is normalized by 200 with HMI. Restore arcsec before
+                # dividing the patch-center radius by the reference 960 arcsec.
+                h_center, w_center = self.inp.shape[-2] // 2, self.inp.shape[-1] // 2
+                dist_norm = (self.inp[:, 1, h_center, w_center]
+                             * self.position_input_scale / self.solar_radius_arcsec).view(-1, 1, 1)
+            else:
+                # Exact historical rule; do not reinterpret old trained tensors.
+                distance_min = distn.min() if self.query_distance_min is None else self.query_distance_min
+                dist_norm = (distn - distance_min) / self.solar_radius_arcsec
+            mod_factor = (1 - self.gamma * dist_norm + self.beta).clamp(self.pm_min, self.pm_max)
+            field = field * mod_factor
+        ret = ret + field
 
         return ret
 

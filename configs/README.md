@@ -15,4 +15,8 @@ Use `python -m training.train --config configs/train_pm_ltew_cc.yaml --data data
 
 The four LTEW variants share `models/lte_warp.py`, registered as `lte-warp`; `use_pm` and `cc_weight` distinguish the experiments. PM-RCAN-CC and PM-SRCNN-CC have separate architecture files. Bicubic, Empirical-D and Empirical-Z are non-learned baselines without checkpoints.
 
+The four LTEW training YAMLs explicitly select `position_mode: patch_center`, restore the normalized radius by 200, use a 960-arcsec reference radius, and clip the modulation to [0.5, 1.5]. The test YAMLs point to unchanged historical checkpoints; loading an unversioned LTEW checkpoint warns and uses the explicit `legacy_query_min` compatibility path. Add `--position-mode patch_center` to opt into a different PM rule with those tensors, with a warning that predictions change. These new training recipes and the retained checkpoints are therefore distinguished explicitly; see [checkpoint compatibility](../pre-trained/README.md).
+
 [`historical/`](historical) contains sanitised copies of the original training configurations for reference. The top-level `train_*.yaml` files are for the released training entry point.
+
+All six released `train_*.yaml` files specify 300 epochs, matching the author-confirmed training schedule for the manuscript experiments. The `epoch_max: 200` entry retained in `historical/pm_srcnn_cc.yaml` is a stale historical setting and should not be used to infer the duration of the paper experiment. The epoch stored in each distributed checkpoint is the selected checkpoint's epoch, rather than the total training duration.

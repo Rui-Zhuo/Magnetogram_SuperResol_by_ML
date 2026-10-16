@@ -35,6 +35,13 @@ class FullDiskTests(unittest.TestCase):
         self.assertAlmostEqual(arrays['SRFfield'][0,0],5.)
         self.assertTrue((arrays['source_mask'][312:,336:]==1).all())
         self.assertTrue((arrays['source_mask']==0).any())
+        self.assertEqual(arrays['quality_flag'].dtype, np.uint8)
+        self.assertEqual(arrays['quality_flag'].shape, arrays['SRFfield'].shape)
+        np.testing.assert_array_equal(
+            arrays['quality_flag'], np.isfinite(arrays['SRfield']).astype(np.uint8))
+        self.assertEqual(arrays['quality_flag'][0, 0], 0)
+        self.assertTrue((arrays['quality_flag'][arrays['source_mask'] == 0] == 0).all())
+        np.testing.assert_array_equal(arrays['quality_flag_values'], [0, 1])
         self.assertEqual(arrays['SRfield'].dtype,np.float32)
         self.assertEqual(arrays['SRFfield'].dtype,np.float64)
         self.assertEqual(records[0]['status'],'interpolation: non-finite HMI patch')
@@ -45,6 +52,15 @@ class FullDiskTests(unittest.TestCase):
         with patch.object(generate,'predict',side_effect=RuntimeError('test failure')):
             with self.assertRaisesRegex(RuntimeError,'test failure'):
                 generate.reconstruct(field,radius,object())
+
+    def test_nonfinite_model_output_is_rejected(self):
+        field = np.ones((400, 400), dtype=np.float32)
+        radius = lambda y, x, size: np.zeros((size, size), dtype=np.float32)
+        for invalid in (np.nan, np.inf, -np.inf):
+            with self.subTest(invalid=invalid), patch.object(
+                    generate, 'predict', return_value=np.full(generate.TARGET, invalid)):
+                with self.assertRaisesRegex(ValueError, 'Invalid prediction'):
+                    generate.reconstruct(field, radius, object())
 
 
 if __name__ == '__main__':

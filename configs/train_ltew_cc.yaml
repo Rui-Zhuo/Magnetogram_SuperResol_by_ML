@@ -26,4 +26,9 @@ model:
         - 256
     hidden_dim: 256
     use_pm: false
+    position_mode: patch_center
+    position_input_scale: 200.0
+    solar_radius_arcsec: 960.0
+    pm_min: 0.5
+    pm_max: 1.5
 model_name: LTEW-CC

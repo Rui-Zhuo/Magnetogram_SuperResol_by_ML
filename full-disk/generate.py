@@ -69,7 +69,17 @@ def reconstruct(field, radius_at, model, chunk_size=8192):
     source = np.zeros(shape, dtype=np.uint8)
     source[np.isfinite(filled)] = 2
     source[learned] = 1
-    return dict(SRfield=sr, SRFfield=filled, source_mask=source), records, offsets
+    # Binary publication flag: remaining invalid pixels also remain zero.
+    # Keep source_mask for users who need to distinguish fallback from invalid.
+    quality_flag = learned.astype(np.uint8)
+    return dict(
+        SRfield=sr, SRFfield=filled, source_mask=source,
+        quality_flag=quality_flag,
+        quality_flag_values=np.array([0, 1], dtype=np.uint8),
+        quality_flag_meanings=np.array([
+            'bicubic_fallback_or_invalid_or_no_model_coverage',
+            'finite_model_prediction',
+        ])), records, offsets
 
 
 def main():
@@ -114,6 +124,9 @@ def main():
         scale_y=TARGET[0]/PATCH, scale_x=TARGET[1]/PATCH,
         coordinate_mapping='Within tile (row,col), output index q corresponds to input-centre coordinate: crop + tile*200 + (q+0.5)*200/target_size - 0.5; reverse the resulting x about input_width-1 for input WCS. The interpolation-only background uses endpoint-aligned sampling.',
         source_mask={'0':'invalid', '1':'model prediction', '2':'interpolation fallback'},
+        quality_flag={'0':'bicubic fallback, no model coverage, or remaining invalid value',
+                      '1':'finite model prediction'},
+        quality_flag_description='Binary pixel provenance flag; not an uncertainty estimate.',
         interpolation='Cubic field interpolation; linear invalid mask with threshold 0.5',
         patch_records=records)
     (a.output/'manifest.json').write_text(json.dumps(metadata, indent=2)+'\n', encoding='utf-8')

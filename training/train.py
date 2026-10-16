@@ -39,6 +39,31 @@ def combined_loss(pred, gt, weight):
     return (1-weight)*(pred-gt).abs().mean() + weight*(1-cc).mean()
 
 
+def validate_resume_spec(requested, saved):
+    """Do not silently resume old weights under a different PM definition."""
+    if requested['name'] != saved['name']:
+        raise ValueError('Resume checkpoint architecture differs from the training configuration')
+    if requested['name'] == 'lte-warp':
+        requested_args, saved_args = requested['args'], saved['args']
+        requested_mode = requested_args.get('position_mode', 'patch_center')
+        saved_mode = saved_args.get('position_mode', 'legacy_query_min')
+        if requested_mode != saved_mode:
+            raise ValueError('Resume checkpoint PM differs from the training configuration; '
+                             'legacy and patch-center training must be specified separately')
+        for key, default in (('use_pm', True), ('position_input_scale', 200.0),
+                             ('solar_radius_arcsec', 960.0), ('pm_min', 0.5), ('pm_max', 1.5)):
+            if requested_args.get(key, default) != saved_args.get(key, default):
+                raise ValueError(f'Resume checkpoint {key} differs from the training configuration')
+
+
+def version_training_spec(spec):
+    """Record new PM defaults so saved weights never look like legacy assets."""
+    spec = copy.deepcopy(spec)
+    if spec['name'] == 'lte-warp':
+        spec['args'].setdefault('position_mode', 'patch_center')
+    return spec
+
+
 def run_epoch(model, loader, device, weight, optimizer=None):
     model.train(optimizer is not None)
     total, count = 0., 0
@@ -65,6 +90,7 @@ def main():
     p.add_argument('--device', default='cuda')
     p.add_argument('--resume', type=Path)
     a = p.parse_args(); cfg = yaml.safe_load(a.config.read_text()); splits = json.loads(a.split.read_text())
+    cfg['model'] = version_training_spec(cfg['model'])
     for key in ['train','val','test']:
         if not splits.get(key): raise ValueError(f'Empty {key} split')
     all_names = sum([splits[k] for k in ['train','val','test']], [])
@@ -83,6 +109,7 @@ def main():
     best, start = float('inf'), 1
     if a.resume:
         checkpoint=torch.load(a.resume,map_location=a.device,weights_only=True)
+        validate_resume_spec(cfg['model'], checkpoint['model'])
         model.load_state_dict(checkpoint['model']['sd']); optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler']); best=checkpoint['best']; start=checkpoint['epoch']+1
     for epoch in range(start,cfg['epochs']+1):

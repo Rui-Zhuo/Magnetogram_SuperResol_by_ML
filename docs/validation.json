@@ -1,10 +1,11 @@
 {
-  "scope": "Package layout, command entry points, model loading and synthetic full-disk workflow checks. No comparison with paper results or historical predictions.",
+  "scope": "Package layout, command entry points, model loading, synthetic full-disk workflow, analytic flux units, patch-center PM and explicit legacy-checkpoint compatibility. No comparison with paper results or historical predictions.",
   "environment": {
     "python": "3.10.7",
     "torch": "2.9.0+cpu",
     "numpy": "1.26.4",
-    "device": "cpu"
+    "device": "cpu",
+    "scipy": "1.9.1"
   },
   "editable_install": "passed with setuptools >=64; hyphenated folders map to prep_dataset and full_disk",
   "cli_help": {
@@ -49,13 +50,20 @@
   ],
   "test_config_override": "passed with stubbed prediction",
   "full_disk_synthetic_integration": "passed: actual FITS/WCS, patch assembly, masks, NPZ, metadata and plotting; network prediction stubbed; library caches redirected to the workspace",
-  "full_disk_unit_tests": "3 passed: grid, placement/fallback, model-error propagation",
-  "documentation": "passed: local links and paper-order sections",
+  "full_disk_unit_tests": "4 passed: grid, placement/fallback and binary quality flag, model-error propagation, non-finite-output rejection",
+  "documentation": "Updated local Markdown links checked; git diff --check passed.",
   "not_run": [
     "Remote archive downloads (require JSOC registration)",
     "Full-disk neural inference",
     "Training/retraining",
     "GPU execution",
     "Comparison with historical research results"
-  ]
+  ],
+  "update_validation_date": "2026-10-16",
+  "environment_notes": "Combined tests initialized PyTorch before SciPy to avoid a Windows DLL import-order conflict. The local SciPy 1.9.1 is older than pyproject.toml requires (>=1.10) and warns about NumPy 1.26.4; all 19 tests passed in this existing environment. No dependencies were installed or changed. Hyphenated folders were mapped to full_disk/prep_dataset in memory as specified by pyproject.toml, without an editable installation.",
+  "flux_unit_tests": "3 passed: Gauss-square-metre to Weber conversion, signed/unsigned polarity, unit-invariant flux ratios",
+  "position_modulation_tests": "12 passed: center-radius scale restoration, per-patch uniformity, batch independence, clipping, no-PM, center/legacy chunk invariance, explicit legacy loading, versioned checkpoint roundtrip, warned PM override, phase-weight shape rejection, resume safeguards, invalid settings",
+  "combined_regression_suite": "19 tests passed; 3 flux + 4 full-disk + 12 PM/checkpoint tests",
+  "checkpoint_validation_note": "The load_and_checksum entries retain the earlier release checks. This update separately verified that all six distributed checkpoint SHA-256 values are unchanged, and tests load synthetic legacy/versioned checkpoints. No historical model-prediction or paper-metric reproduction is asserted.",
+  "weight_file_preservation": "All 6 distributed .pth files match the before-update backup manifest and their existing released SHA-256 values; no tensors were modified."
 }

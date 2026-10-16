@@ -2,23 +2,28 @@
 
 ## Primary model
 
-The primary model is **PM-LTEW-CC**, epoch 115. Its model specification and tensor values are retained; optimizer state is omitted from the public inference checkpoint. `pre-trained/manifest.json` identifies original and exported files with SHA-256 hashes. The five ablations are PM-LTEW, LTEW-CC, LTEW, PM-RCAN-CC and PM-SRCNN-CC.
+The distributed primary-model checkpoint is **PM-LTEW-CC**, selected at epoch 115. Its tensor values are retained; optimizer state is omitted from the public inference checkpoint. `pre-trained/manifest.json` identifies original and exported files with SHA-256 hashes and records compatibility settings. The five other checkpoints are PM-LTEW, LTEW-CC, LTEW, PM-RCAN-CC and PM-SRCNN-CC. A selected checkpoint epoch is distinct from the author-confirmed 300-epoch training schedule.
 
-The LTE-warp implementation comes from retained original source, with package-relative imports, CPU/CUDA device handling and an explicit no-position-modulation switch. RCAN/MLP parameter names are preserved. The paper's PM-LTEW-CC model is registered as `lte-warp`; its phase layer receives a two-dimensional cell-size vector.
+The portable Fourier decoder is registered as `lte-warp`, with package-relative imports, CPU/CUDA handling and an explicit no-PM switch. It retains the distributed weights' two-dimensional cell-size phase layer. It is not a port of the research source's ten-feature Jacobian decoder; no two-feature checkpoint is converted into a ten-feature checkpoint. RCAN/MLP parameter names and the supplied checkpoint tensors are preserved.
 
 ## Position modulation
 
-The LTE-warp path divides both HMI and projected radius by 200. For interpolated normalized radius `d`, the skip connection is:
+New model construction and all four released LTEW training configurations use `position_mode: patch_center`. HMI and projected radius are divided by 200 at input. The normalized patch-center radius is converted back to arcsec, then divided by the fixed reference solar radius of 960 arcsec:
 
 ```python
-dist_norm = (d - d.min()) / 960
+center_radius_arcsec = inp[:, 1, H // 2, W // 2] * 200
+dist_norm = center_radius_arcsec / 960
 modulation = (1 - gamma * dist_norm + beta).clamp(0.5, 1.5)
 output = implicit_prediction + bilinear_hmi * modulation
 ```
 
-`gamma` and `beta` are trained parameters. No-PM ablations add unmodulated bilinear HMI instead. The radius minimum spans the complete query tensor. Chunked inference computes the minimum once and reuses it across chunks. Each inference call processes one observation.
+`gamma` and `beta` are trainable parameters. One scalar is applied to all query locations in each patch, independently for each batch member. No-PM ablations add unmodulated bilinear HMI instead. Query chunking cannot change the center-radius weight. Fixed-grid RCAN/SRCNN use the same center-radius normalization and clipping.
 
-Fixed-grid RCAN/SRCNN implementations use the input patch's centre radius, scale it back by 200/960, and apply their learned, clamped affine modulation. Their target grid is fixed at 312x336. These details are retained in their respective model definitions.
+### Historical checkpoint compatibility
+
+The distributed LTEW checkpoint specifications predate explicit PM-version metadata. `models.make(..., load_sd=True)` and `inference.predict.load_model` select `legacy_query_min` for such specifications and warn the user. This path preserves the earlier public-release formula, `(interpolated_normalized_radius - minimum_query_radius) / 960`; it does not restore the radius by 200. Chunked legacy inference calculates the full-query minimum once. This is a compatibility rule for the existing assets, not a claim that their original training PM provenance has been independently established.
+
+An explicit `--position-mode patch_center` override loads the same tensors with the center-radius formula and warns that predictions change. No historical-reproduction claim is made for that override. New training saves `position_mode` in the checkpoint model arguments, even if a custom training YAML omitted it. Resuming an old checkpoint under a different PM mode is rejected. The tensor dimensions and bytes of all six distributed weight files remain unchanged.
 
 ## Processing and training
 
@@ -36,6 +41,6 @@ Local-registration kernels are retained. Removed SciPy `interp2d` calls are repl
 
 Examples use the supplied paired NPZ data, saved predictions and existing figure PNGs. `examples/manifest.json` maps observation IDs to original prediction filenames. Public prediction NPZ files contain `HMIfield`, `Txy`, `SPfield` from paired data and saved `pred` reshaped to the target grid. Predictions are not recalculated to replace existing research results. The evaluator reads its reference from the paired-data directory rather than relying on the historical output-file target normalization.
 
-The three full-disk paper figures and observing information are in `examples/application`. Large existing arrays are omitted from the current tree. `full-disk` provides download, centred patch inference, tile assembly, cubic filling and plotting commands, adapted from the retained research scripts. Newly generated files include a source mask distinguishing predictions, interpolation fallback and invalid pixels.
+The three full-disk paper figures and observing information are in `examples/application`. Large existing arrays are omitted from the current tree. `full-disk` provides download, centred patch inference, tile assembly, cubic filling and plotting commands, adapted from the retained research scripts. Newly generated files include a binary `quality_flag` (1: finite model output; 0: fallback, missing or invalid) and the more detailed `source_mask` (0: invalid; 1: model; 2: interpolation). Neither mask quantifies uncertainty or retrospectively supplies provenance for historical files.
 
-Release checks cover file completeness, syntax, entry-point availability, split membership and model loading. Agreement between current code, historical results and paper figures is outside this release-preparation scope. A complete data archive remains a separate task.
+Release checks cover file completeness, syntax, entry-point availability, split membership and model loading. PM tests additionally cover absolute-radius scaling, uniform per-patch weights, batch independence, clipping, no-PM behavior, chunk invariance, versioned checkpoint loading and resume safeguards. Agreement between current code, historical results and paper figures is outside this release-preparation scope. A complete data archive remains a separate task.

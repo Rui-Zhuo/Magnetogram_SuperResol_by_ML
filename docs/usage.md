@@ -34,6 +34,8 @@ python -m evaluation.plot_samples --data examples/data --predictions outputs/pm_
 
 Select other Table 2 models using the matching [configuration](../configs/README.md). Explicit inference options override the test YAML. Training `last.pth` files support `--resume`; distributed inference checkpoints omit optimizer state. Inputs are `[HMIfield, Txy]`; both channels and training targets are divided by 200. Prediction arrays are converted back to G.
 
+New LTEW training uses patch-center PM and stores its mode in the checkpoint. The supplied unversioned LTEW checkpoints load with a warning through the explicit legacy-PM compatibility path. To inspect center PM with retained weights, use `python -m inference.predict --config configs/test_pm_ltew_cc.yaml --position-mode patch_center --output outputs/pm_center_override`. This override changes predictions and is not a verified historical-result reproduction. Resume rejects PM-mode mismatches. The portable decoder retains two cell-size features; ten-feature/Jacobian checkpoints are not reshaped to fit it.
+
 ## Full-disk applications
 
 The [full-disk guide](../full-disk/README.md) provides the complete download, patch prediction, assembly, filling and plotting sequence. The [case gallery](../examples/application/README.md) contains the paper examples without large result arrays.
